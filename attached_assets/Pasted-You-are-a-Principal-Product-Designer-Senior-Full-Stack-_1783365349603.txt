@@ -1,0 +1,551 @@
+You are a Principal Product Designer, Senior Full Stack Engineer, and SaaS Architect.
+
+Build a production-quality frontend skeleton for an enterprise HRMS SaaS platform.
+
+IMPORTANT:
+Do NOT implement backend APIs, authentication logic, databases, payroll calculations, or business logic.
+This task is ONLY to build a scalable frontend skeleton with routing, layouts, navigation, reusable components, placeholder pages, dummy data, and clean architecture.
+
+The product should feel like a combination of Darwinbox, Keka, Rippling, BambooHR, and Linear.
+
+The design language should be modern, minimal, premium, and enterprise-grade.
+
+-----------------------------------
+TECH STACK
+-----------------------------------
+
+Use:
+
+• Next.js 15 (App Router)
+• React 19
+• TypeScript
+• Tailwind CSS
+• shadcn/ui
+• Lucide Icons
+• Framer Motion
+• TanStack Table
+• React Hook Form
+• Zod
+• Zustand
+• Recharts
+
+Project must be production-ready and component-driven.
+
+-----------------------------------
+DESIGN SYSTEM
+-----------------------------------
+
+Theme:
+• Light mode only (for now)
+• White backgrounds
+• Neutral grays
+• Indigo primary
+• Blue accents
+• Rounded corners
+• Soft shadows
+• Professional typography
+
+Everything should be responsive.
+
+-----------------------------------
+FIRST VERSION
+-----------------------------------
+
+Build ONLY the Super Admin Portal.
+
+Ignore HR, Manager and Employee logins.
+
+Assume user is already logged in.
+
+Landing page after login:
+
+Dashboard
+
+-----------------------------------
+GLOBAL LAYOUT
+-----------------------------------
+
+Create:
+
+Persistent left sidebar
+
+Top navigation bar
+
+Breadcrumb
+
+Global Search placeholder
+
+Notifications placeholder
+
+Profile menu placeholder
+
+Content area
+
+-----------------------------------
+SIDEBAR
+-----------------------------------
+
+Dashboard
+
+Organization Setup
+    Company Profile
+    Departments
+    Designations
+    Locations
+    Business Units
+    Cost Centers
+    Grades
+    Employment Types
+    Holiday Calendar
+    Shift Management
+    Leave Policies
+    Salary Structures
+
+Employees
+Bulk Upload
+Attendance
+Leave
+Payroll
+Performance
+Reports
+AI Insights
+Documents
+Approvals
+Administration
+
+-----------------------------------
+DASHBOARD
+-----------------------------------
+
+Executive Dashboard skeleton containing:
+
+KPI Cards
+
+Total Employees
+
+Departments
+
+Pending Leaves
+
+Payroll Status
+
+Attendance %
+
+Attrition %
+
+Upcoming Holidays
+
+Recent Activity
+
+Quick Actions
+
+Recent Employees
+
+Notifications
+
+Charts
+
+Headcount Trend
+
+Department Distribution
+
+Attendance Trend
+
+Recent Imports
+
+Everything should use placeholder data.
+
+-----------------------------------
+ORGANIZATION SETUP
+-----------------------------------
+
+Create separate pages for:
+
+Company Profile
+
+Departments
+
+Designations
+
+Locations
+
+Business Units
+
+Cost Centers
+
+Grades
+
+Employment Types
+
+Holiday Calendar
+
+Shift Management
+
+Leave Policies
+
+Salary Structures
+
+Each page should include:
+
+Header
+
+Search
+
+Filters
+
+Table
+
+Empty state
+
+Add button
+
+Edit button
+
+Delete button
+
+Pagination
+
+Drawer or Modal for Add/Edit
+
+Use mock data.
+
+-----------------------------------
+EMPLOYEE MODULE
+-----------------------------------
+
+Only build navigation and empty pages.
+
+Pages:
+
+Employee Directory
+
+Add Employee
+
+Employee Profile
+
+Employee Documents
+
+Reporting Hierarchy
+
+Exit Management
+
+Do NOT build functionality.
+
+-----------------------------------
+BULK IMPORT
+-----------------------------------
+
+Pages:
+
+Import Dashboard
+
+Employee Upload
+
+Department Upload
+
+Leave Upload
+
+Payroll Upload
+
+Import History
+
+Each page should include:
+
+Upload card
+
+Download Template button
+
+Recent Imports table
+
+Import Status cards
+
+-----------------------------------
+ATTENDANCE
+-----------------------------------
+
+Skeleton pages:
+
+Attendance Dashboard
+
+Daily Attendance
+
+Monthly Attendance
+
+Shift Roster
+
+Attendance Reports
+
+-----------------------------------
+LEAVE
+-----------------------------------
+
+Skeleton pages:
+
+Leave Dashboard
+
+Leave Requests
+
+Leave Approval
+
+Holiday Calendar
+
+-----------------------------------
+PAYROLL
+-----------------------------------
+
+Skeleton pages:
+
+Payroll Dashboard
+
+Salary Structures
+
+Payroll Processing
+
+Payslips
+
+Compliance
+
+Reports
+
+-----------------------------------
+PERFORMANCE
+-----------------------------------
+
+Skeleton pages:
+
+Performance Dashboard
+
+Goals
+
+KPIs
+
+Review Cycles
+
+Feedback
+
+Reports
+
+-----------------------------------
+REPORTS
+-----------------------------------
+
+Skeleton pages:
+
+Employee Reports
+
+Attendance Reports
+
+Payroll Reports
+
+Performance Reports
+
+Attrition Reports
+
+-----------------------------------
+AI INSIGHTS
+-----------------------------------
+
+Only placeholder pages.
+
+AI Dashboard
+
+Attrition Risk
+
+Workforce Planning
+
+Hiring Recommendation
+
+AI Assistant
+
+-----------------------------------
+DOCUMENTS
+-----------------------------------
+
+Employee Documents
+
+Company Documents
+
+Policy Library
+
+-----------------------------------
+APPROVALS
+-----------------------------------
+
+Pending Approvals
+
+Leave Approvals
+
+Payroll Approvals
+
+-----------------------------------
+ADMINISTRATION
+-----------------------------------
+
+Users
+
+Roles
+
+Permissions
+
+Audit Logs
+
+System Settings
+
+-----------------------------------
+COMPONENTS
+-----------------------------------
+
+Create reusable components:
+
+PageHeader
+
+SectionHeader
+
+StatCard
+
+ChartCard
+
+EmptyState
+
+DataTable
+
+SearchBar
+
+FilterBar
+
+ActionDropdown
+
+ConfirmationDialog
+
+FormModal
+
+SideDrawer
+
+FileUploadCard
+
+Breadcrumb
+
+Sidebar
+
+TopNavbar
+
+UserAvatar
+
+NotificationDropdown
+
+-----------------------------------
+DUMMY DATA
+-----------------------------------
+
+Generate realistic mock data for every table.
+
+Examples:
+
+Departments
+
+Locations
+
+Employees
+
+Leave Policies
+
+Salary Structures
+
+Attendance
+
+Recent Imports
+
+No lorem ipsum.
+
+Use believable HR data.
+
+-----------------------------------
+ROUTING
+-----------------------------------
+
+Every sidebar item must have its own route.
+
+Example:
+
+/dashboard
+
+/organization/company
+
+/organization/departments
+
+/organization/designations
+
+/organization/locations
+
+/organization/business-units
+
+/organization/cost-centers
+
+/organization/grades
+
+/organization/employment-types
+
+/organization/holiday-calendar
+
+/organization/shifts
+
+/organization/leave-policies
+
+/organization/salary-structures
+
+/employees
+
+/employees/new
+
+/employees/profile
+
+/import
+
+/attendance
+
+/leave
+
+/payroll
+
+/performance
+
+/reports
+
+/ai
+
+/documents
+
+/approvals
+
+/administration
+
+-----------------------------------
+CODE QUALITY
+-----------------------------------
+
+Use scalable folder structure.
+
+Keep components reusable.
+
+No duplicated code.
+
+No placeholder comments like:
+
+// TODO
+
+Instead create complete UI skeletons.
+
+Follow enterprise architecture.
+
+-----------------------------------
+IMPORTANT
+
+Do NOT implement backend functionality.
+
+Do NOT connect APIs.
+
+Do NOT create authentication.
+
+Do NOT create database models.
+
+Focus entirely on building a beautiful, scalable, production-quality frontend skeleton that will serve as the foundation for the complete HRMS.
