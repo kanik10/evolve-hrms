@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/EmptyState"
 import { SearchBar } from "@/components/SearchBar"
 import { Button } from "@/components/ui/button"
 import { Plus, Users } from "lucide-react"
+import { organizationEmployees } from "@/features/organization/data/organizationData"
 
 export default function Employees() {
   return (
@@ -28,18 +29,25 @@ export default function Employees() {
         </div>
       </div>
 
-      {/* For now, just showing empty state to demonstrate */}
-      <div className="mt-8">
-        <EmptyState 
-          icon={<Users className="h-8 w-8" />}
-          title="No employees found"
-          description="You haven't added any employees yet, or no employees match your search criteria."
-          action={
-            <Button variant="outline">
-              Clear Search
-            </Button>
-          }
-        />
+      <div className="mt-8 rounded-xl border bg-card p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-sm font-semibold">Employees linked to organization setup</h3>
+          <span className="text-xs text-muted-foreground">{organizationEmployees.length} records</span>
+        </div>
+        <div className="space-y-2">
+          {organizationEmployees.slice(0, 6).map((employee) => (
+            <div key={employee.id} className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
+              <div>
+                <p className="font-medium">{employee.name}</p>
+                <p className="text-muted-foreground">{employee.department} · {employee.designation}</p>
+              </div>
+              <div className="text-right text-xs text-muted-foreground">
+                <p>{employee.location ?? "Unassigned location"}</p>
+                <p>{employee.salaryStructureId ?? "No salary structure"}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </AppLayout>
   )

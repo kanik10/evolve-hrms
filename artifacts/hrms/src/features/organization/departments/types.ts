@@ -8,6 +8,7 @@ export interface Department {
   head: string
   businessUnit: string
   costCenter: string
+  location?: string
   description: string
   status: DepartmentStatus
   employeeCount: number
@@ -23,6 +24,7 @@ export type DepartmentFormValues = {
   headId: string
   businessUnit: string
   costCenter: string
+  location: string
   description: string
   status: "Active" | "Inactive"
 }

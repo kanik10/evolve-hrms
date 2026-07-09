@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { type DepartmentFormValues } from "../types"
-import { BUSINESS_UNITS, COST_CENTERS, DEPARTMENT_HEADS } from "../data/mock"
+import { organizationBusinessUnits, organizationCostCenters, organizationEmployees, organizationLocations } from "../../data/organizationData"
 
 // ── Schema ───────────────────────────────────────────────────────────────────
 
@@ -38,6 +38,7 @@ export const departmentFormSchema = z.object({
   headId: z.string().min(1, "Department head is required"),
   businessUnit: z.string().min(1, "Business unit is required"),
   costCenter: z.string().min(1, "Cost center is required"),
+  location: z.string().min(1, "Primary location is required"),
   description: z.string().optional(),
   status: z.enum(["Active", "Inactive"]),
 })
@@ -146,7 +147,7 @@ export function DepartmentForm({ form, isEdit = false }: DepartmentFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {DEPARTMENT_HEADS.map((emp) => (
+                  {organizationEmployees.map((emp) => (
                     <SelectItem key={emp.id} value={emp.id}>
                       {emp.name}
                     </SelectItem>
@@ -174,9 +175,9 @@ export function DepartmentForm({ form, isEdit = false }: DepartmentFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {BUSINESS_UNITS.map((bu) => (
-                    <SelectItem key={bu} value={bu}>
-                      {bu}
+                  {organizationBusinessUnits.map((bu) => (
+                    <SelectItem key={bu.id} value={bu.name}>
+                      {bu.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -202,9 +203,37 @@ export function DepartmentForm({ form, isEdit = false }: DepartmentFormProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {COST_CENTERS.map((cc) => (
-                    <SelectItem key={cc.value} value={cc.value}>
-                      {cc.label}
+                  {organizationCostCenters.map((cc) => (
+                    <SelectItem key={cc.id} value={cc.name}>
+                      {cc.code} - {cc.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Primary Location */}
+        <FormField
+          control={form.control}
+          name="location"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Primary Location <span className="text-destructive">*</span>
+              </FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select primary location" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {organizationLocations.map((location) => (
+                    <SelectItem key={location.id} value={location.name}>
+                      {location.name} · {location.city}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -271,6 +300,7 @@ export const DEFAULT_DEPT_FORM_VALUES: DepartmentFormValues = {
   headId: "",
   businessUnit: "",
   costCenter: "",
+  location: "",
   description: "",
   status: "Active",
 }

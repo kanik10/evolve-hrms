@@ -22,6 +22,14 @@ import {
 
 import DesignationDetailPage from './features/organization/designations/pages/DesignationDetailPage';
 import DepartmentDetailPage from './features/organization/departments/pages/DepartmentDetailPage';
+import LocationDetailPage from './features/organization/locations/pages/LocationDetailPage';
+import BusinessUnitDetailPage from './features/organization/business-units/pages/BusinessUnitDetailPage';
+import CostCenterDetailPage from './features/organization/cost-centers/pages/CostCenterDetailPage';
+import GradeDetailPage from './features/organization/grades/pages/GradeDetailPage';
+import EmploymentTypeDetailPage from './features/organization/employment-types/pages/EmploymentTypeDetailPage';
+import ShiftDetailPage from './features/organization/shifts/pages/ShiftDetailPage';
+import LeavePolicyDetailPage from './features/organization/leave-policies/pages/LeavePolicyDetailPage';
+import SalaryStructureDetailPage from './features/organization/salary-structures/pages/SalaryStructureDetailPage';
 import Employees from './pages/Employees';
 import Import from './pages/Import';
 import SkeletonPage from './pages/SkeletonPage';
@@ -42,14 +50,22 @@ function Router() {
       <Route path="/organization/departments" component={Departments} />
       <Route path="/organization/designations/:id" component={DesignationDetailPage} />
       <Route path="/organization/designations" component={Designations} />
+      <Route path="/organization/locations/:id" component={LocationDetailPage} />
       <Route path="/organization/locations" component={Locations} />
+      <Route path="/organization/business-units/:id" component={BusinessUnitDetailPage} />
       <Route path="/organization/business-units" component={BusinessUnits} />
+      <Route path="/organization/cost-centers/:id" component={CostCenterDetailPage} />
       <Route path="/organization/cost-centers" component={CostCenters} />
+      <Route path="/organization/grades/:id" component={GradeDetailPage} />
       <Route path="/organization/grades" component={Grades} />
+      <Route path="/organization/employment-types/:id" component={EmploymentTypeDetailPage} />
       <Route path="/organization/employment-types" component={EmploymentTypes} />
       <Route path="/organization/holiday-calendar" component={HolidayCalendar} />
+      <Route path="/organization/shifts/:id" component={ShiftDetailPage} />
       <Route path="/organization/shifts" component={ShiftManagement} />
+      <Route path="/organization/leave-policies/:id" component={LeavePolicyDetailPage} />
       <Route path="/organization/leave-policies" component={LeavePolicies} />
+      <Route path="/organization/salary-structures/:id" component={SalaryStructureDetailPage} />
       <Route path="/organization/salary-structures" component={SalaryStructures} />
 
       <Route path="/employees" component={Employees} />
