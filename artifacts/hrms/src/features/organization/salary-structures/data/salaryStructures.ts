@@ -1,50 +1,12 @@
-export type SalaryStructureRecord = {
-  id: string
-  structureName: string
-  grade: string
-  basic: string
-  hra: string
-  specialAllowance: string
-  bonus: string
-  pf: string
-  esic: string
-  professionalTax: string
-  tds: string
-  status: "Active" | "Inactive"
-}
+import { organizationSalaryStructures, type OrganizationSalaryStructure, getOrganizationDepartmentOptions } from "../../data/organizationData"
+
+export type SalaryStructureRecord = OrganizationSalaryStructure
 
 export type SalaryStructureFormValues = Omit<SalaryStructureRecord, "id">
 
-export const initialSalaryStructures: SalaryStructureRecord[] = [
-  {
-    id: "SAL1",
-    structureName: "Manager Grade Structure",
-    grade: "Manager",
-    basic: "50000",
-    hra: "20000",
-    specialAllowance: "15000",
-    bonus: "5000",
-    pf: "1800",
-    esic: "0",
-    professionalTax: "200",
-    tds: "3000",
-    status: "Active",
-  },
-  {
-    id: "SAL2",
-    structureName: "Executive Structure",
-    grade: "Executive",
-    basic: "35000",
-    hra: "14000",
-    specialAllowance: "9000",
-    bonus: "3000",
-    pf: "1400",
-    esic: "0",
-    professionalTax: "200",
-    tds: "1500",
-    status: "Active",
-  },
-]
+export const initialSalaryStructures: SalaryStructureRecord[] = [...organizationSalaryStructures]
+
+export const salaryStructureDepartments = getOrganizationDepartmentOptions()
 
 export function createEmptySalaryStructureFormValues(): SalaryStructureFormValues {
   return {

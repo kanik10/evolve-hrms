@@ -11,6 +11,7 @@ import { OrgPageHeader } from "../components/OrgPageHeader"
 import { CostCenterDrawer } from "../cost-centers/components/CostCenterDrawer"
 import { CostCenterDeleteDialog } from "../cost-centers/components/CostCenterDeleteDialog"
 import { type CostCenterFormValues, createEmptyCostCenterFormValues, getCostCenters, updateCostCenters, type CostCenterRecord } from "../cost-centers/data/costCenters"
+import { costCenterDepartments } from "../cost-centers/data/costCenters"
 
 export default function CostCenters() {
   const [, navigate] = useLocation()
@@ -121,10 +122,11 @@ export default function CostCenters() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All departments</SelectItem>
-            <SelectItem value="Engineering">Engineering</SelectItem>
-            <SelectItem value="Sales">Sales</SelectItem>
-            <SelectItem value="Operations">Operations</SelectItem>
-            <SelectItem value="Finance">Finance</SelectItem>
+            {costCenterDepartments.map((department) => (
+              <SelectItem key={department} value={department}>
+                {department}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

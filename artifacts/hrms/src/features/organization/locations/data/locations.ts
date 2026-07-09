@@ -1,100 +1,23 @@
-export type LocationStatus = "Active" | "Inactive"
+import {
+  organizationLocations,
+  type OrganizationLocation,
+  getOrganizationBusinessUnitOptions,
+} from "../../data/organizationData"
 
-export type LocationRecord = {
-  id: string
-  name: string
-  code: string
-  address: string
-  city: string
-  state: string
-  country: string
-  timezone: string
-  workingHours: string
-  businessUnit: string
-  status: LocationStatus
-}
+export type LocationStatus = OrganizationLocation["status"]
+
+export type LocationRecord = OrganizationLocation
 
 export type LocationFormValues = Omit<LocationRecord, "id">
 
-export const businessUnits = [
-  "Technology BU",
-  "Commerce BU",
-  "Services BU",
-  "Enterprise BU",
-]
+export const businessUnits = getOrganizationBusinessUnitOptions()
 
-export const initialLocations: LocationRecord[] = [
-  {
-    id: "L01",
-    name: "Mumbai HQ",
-    code: "MUM-HQ",
-    address: "Bandra Kurla Complex, Plot 14",
-    city: "Mumbai",
-    state: "Maharashtra",
-    country: "India",
-    timezone: "IST (UTC+5:30)",
-    workingHours: "Mon-Fri, 09:00-18:00",
-    businessUnit: "Technology BU",
-    status: "Active",
-  },
-  {
-    id: "L02",
-    name: "Bangalore Tech Park",
-    code: "BLR-TP",
-    address: "Electronic City, Phase 1",
-    city: "Bangalore",
-    state: "Karnataka",
-    country: "India",
-    timezone: "IST (UTC+5:30)",
-    workingHours: "Mon-Fri, 09:00-18:00",
-    businessUnit: "Technology BU",
-    status: "Active",
-  },
-  {
-    id: "L03",
-    name: "Delhi NCR",
-    code: "DEL-NCR",
-    address: "Cyber City, Gurugram",
-    city: "Gurugram",
-    state: "Haryana",
-    country: "India",
-    timezone: "IST (UTC+5:30)",
-    workingHours: "Mon-Fri, 09:00-18:00",
-    businessUnit: "Commerce BU",
-    status: "Active",
-  },
-  {
-    id: "L04",
-    name: "Hyderabad Campus",
-    code: "HYD-CAMP",
-    address: "HITEC City, Tower 2",
-    city: "Hyderabad",
-    state: "Telangana",
-    country: "India",
-    timezone: "IST (UTC+5:30)",
-    workingHours: "Mon-Fri, 09:00-18:00",
-    businessUnit: "Services BU",
-    status: "Inactive",
-  },
-  {
-    id: "L05",
-    name: "Pune Office",
-    code: "PNQ-01",
-    address: "Hinjewadi Phase 3",
-    city: "Pune",
-    state: "Maharashtra",
-    country: "India",
-    timezone: "IST (UTC+5:30)",
-    workingHours: "Mon-Fri, 09:00-18:00",
-    businessUnit: "Enterprise BU",
-    status: "Active",
-  },
-]
+export const initialLocations: LocationRecord[] = [...organizationLocations]
 
 export const locationEmployees: Record<string, Array<{ name: string; role: string; email: string }>> = {
   L01: [
     { name: "Rahul Sharma", role: "Regional Director", email: "rahul.sharma@evolvehr.com" },
-    { name: "Priya Nair", role: "HR Manager", email: "priya.nair@evolvehr.com" },
+    { name: "Priya Singh", role: "HR Manager", email: "priya.singh@evolvehr.com" },
   ],
   L02: [
     { name: "Sneha Patel", role: "Engineering Lead", email: "sneha.patel@evolvehr.com" },
@@ -115,7 +38,7 @@ export const locationEmployees: Record<string, Array<{ name: string; role: strin
 export const locationDepartments: Record<string, Array<{ name: string; head: string }>> = {
   L01: [
     { name: "Engineering", head: "Rahul Sharma" },
-    { name: "HR", head: "Priya Nair" },
+    { name: "HR", head: "Priya Singh" },
   ],
   L02: [
     { name: "Product", head: "Sneha Patel" },

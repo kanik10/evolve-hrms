@@ -1,58 +1,20 @@
-export type CostCenterStatus = "Active" | "Inactive"
+import {
+  organizationCostCenters,
+  type OrganizationCostCenter,
+  getOrganizationDepartmentOptions,
+  getOrganizationBusinessUnitOptions,
+} from "../../data/organizationData"
 
-export type CostCenterRecord = {
-  id: string
-  name: string
-  code: string
-  department: string
-  businessUnit: string
-  status: CostCenterStatus
-  budget: string
-}
+export type CostCenterStatus = OrganizationCostCenter["status"]
+
+export type CostCenterRecord = OrganizationCostCenter
 
 export type CostCenterFormValues = Omit<CostCenterRecord, "id">
 
-export const initialCostCenters: CostCenterRecord[] = [
-  {
-    id: "CC1",
-    name: "Engineering Core",
-    code: "ENG-01",
-    department: "Engineering",
-    businessUnit: "Technology BU",
-    status: "Active",
-    budget: "₹4.5Cr",
-  },
-  {
-    id: "CC2",
-    name: "Marketing & Sales",
-    code: "MKT-02",
-    department: "Sales",
-    businessUnit: "Commerce BU",
-    status: "Active",
-    budget: "₹2.2Cr",
-  },
-  {
-    id: "CC3",
-    name: "Operations Support",
-    code: "OPS-03",
-    department: "Operations",
-    businessUnit: "Services BU",
-    status: "Inactive",
-    budget: "₹1.1Cr",
-  },
-  {
-    id: "CC4",
-    name: "Admin & Finance",
-    code: "ADM-04",
-    department: "Finance",
-    businessUnit: "Enterprise BU",
-    status: "Active",
-    budget: "₹90L",
-  },
-]
+export const initialCostCenters: CostCenterRecord[] = [...organizationCostCenters]
 
-export const costCenterDepartments = ["Engineering", "Product", "Sales", "Marketing", "Operations", "Finance", "HR", "IT", "Design"]
-export const costCenterBusinessUnits = ["Technology BU", "Commerce BU", "Services BU", "Enterprise BU"]
+export const costCenterDepartments = getOrganizationDepartmentOptions()
+export const costCenterBusinessUnits = getOrganizationBusinessUnitOptions()
 
 export function createEmptyCostCenterFormValues(): CostCenterFormValues {
   return {

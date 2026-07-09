@@ -1,44 +1,12 @@
-export type LeavePolicyRecord = {
-  id: string
-  policyName: string
-  annualLeave: string
-  casualLeave: string
-  sickLeave: string
-  carryForward: string
-  negativeBalance: string
-  encashment: string
-  eligibility: string
-  status: "Active" | "Inactive"
-}
+import { organizationLeavePolicies, type OrganizationLeavePolicy, getOrganizationDepartmentOptions } from "../../data/organizationData"
+
+export type LeavePolicyRecord = OrganizationLeavePolicy
 
 export type LeavePolicyFormValues = Omit<LeavePolicyRecord, "id">
 
-export const initialLeavePolicies: LeavePolicyRecord[] = [
-  {
-    id: "LP1",
-    policyName: "Standard Full-Time",
-    annualLeave: "24",
-    casualLeave: "8",
-    sickLeave: "12",
-    carryForward: "10",
-    negativeBalance: "No",
-    encashment: "Yes",
-    eligibility: "All Full-Time Employees",
-    status: "Active",
-  },
-  {
-    id: "LP2",
-    policyName: "Contract Employees",
-    annualLeave: "12",
-    casualLeave: "4",
-    sickLeave: "6",
-    carryForward: "0",
-    negativeBalance: "No",
-    encashment: "No",
-    eligibility: "Contractors and Consultants",
-    status: "Active",
-  },
-]
+export const initialLeavePolicies: LeavePolicyRecord[] = [...organizationLeavePolicies]
+
+export const leavePolicyDepartments = getOrganizationDepartmentOptions()
 
 export function createEmptyLeavePolicyFormValues(): LeavePolicyFormValues {
   return {

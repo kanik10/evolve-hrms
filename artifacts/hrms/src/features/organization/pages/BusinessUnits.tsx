@@ -1,15 +1,11 @@
 import * as React from "react"
-import { Building2, ChevronLeft, ChevronRight, Edit3, Plus, Search, Trash2 } from "lucide-react"
+import { Building2, ChevronLeft, ChevronRight, Edit3, Plus, Trash2 } from "lucide-react"
 import { useLocation } from "wouter"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { OrgLayout } from "../components/OrgLayout"
-import { OrgPageHeader } from "../components/OrgPageHeader"
+import { OrgLayout, OrgPageHeader, Filters, MasterTable, StatusBadge, EmptyState, DeleteDialog } from "../index"
 import { BusinessUnitDrawer } from "../business-units/components/BusinessUnitDrawer"
-import { BusinessUnitDeleteDialog } from "../business-units/components/BusinessUnitDeleteDialog"
 import { type BusinessUnitFormValues, createEmptyBusinessUnitFormValues, getBusinessUnits, updateBusinessUnits, type BusinessUnitRecord } from "../business-units/data/businessUnits"
 import { getOrganizationCostCenterOptions, getOrganizationLocationOptions, getOrganizationDepartmentOptions } from "../data/organizationData"
 
@@ -107,25 +103,37 @@ export default function BusinessUnits() {
         }
       />
 
-      <div className="mb-6 grid gap-4 md:grid-cols-[1.4fr_0.6fr]">
-        <label className="relative block">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search by name, code, or head" className="pl-9" />
-        </label>
+      <Filters
+        search={search}
+        onSearchChange={setSearch}
+        onClear={() => setSearch("")}
+        placeholder="Search by name, code, or head"
+      >
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger>
+          <SelectTrigger className="w-[190px]">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All statuses</SelectItem>
             <SelectItem value="Active">Active</SelectItem>
             <SelectItem value="Inactive">Inactive</SelectItem>
+            <SelectItem value="Archived">Archived</SelectItem>
           </SelectContent>
         </Select>
-      </div>
+      </Filters>
 
-      <div className="overflow-hidden rounded-xl border bg-card">
-        <Table>
+      <MasterTable
+        emptyState={
+          <EmptyState
+            icon={Building2}
+            title="No business units found"
+            description="Try a different search or filter, or create a new business unit to get started."
+            action={{ label: "Add Business Unit", onClick: openCreateDrawer, icon: Plus }}
+          />
+        }
+      >
+        {visibleBusinessUnits.length > 0 ? (
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Business Unit</TableHead>
@@ -136,42 +144,35 @@ export default function BusinessUnits() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {visibleBusinessUnits.length > 0 ? (
-              visibleBusinessUnits.map((businessUnit) => (
-                <TableRow key={businessUnit.id} className="cursor-pointer" onClick={() => navigate(`/organization/business-units/${businessUnit.id}`)}>
-                  <TableCell>
-                    <div>
-                      <p className="font-medium">{businessUnit.name}</p>
-                      <p className="text-sm text-muted-foreground">{businessUnit.description}</p>
-                    </div>
-                  </TableCell>
-                  <TableCell>{businessUnit.code}</TableCell>
-                  <TableCell>{businessUnit.head}</TableCell>
-                  <TableCell>
-                    <Badge variant={businessUnit.status === "Active" ? "default" : "secondary"}>{businessUnit.status}</Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2" onClick={(event) => event.stopPropagation()}>
-                      <Button variant="outline" size="icon" onClick={() => openEditDrawer(businessUnit)}>
-                        <Edit3 className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="icon" onClick={() => { setDeletingBusinessUnit(businessUnit); setDeleteOpen(true) }}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={5} className="py-12 text-center text-sm text-muted-foreground">
-                  No business units match the current filters.
+            {visibleBusinessUnits.map((businessUnit) => (
+              <TableRow key={businessUnit.id} className="cursor-pointer" onClick={() => navigate(`/organization/business-units/${businessUnit.id}`)}>
+                <TableCell>
+                  <div>
+                    <p className="font-medium">{businessUnit.name}</p>
+                    <p className="text-sm text-muted-foreground">{businessUnit.description}</p>
+                  </div>
+                </TableCell>
+                <TableCell>{businessUnit.code}</TableCell>
+                <TableCell>{businessUnit.head}</TableCell>
+                <TableCell>
+                  <StatusBadge status={businessUnit.status} />
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2" onClick={(event) => event.stopPropagation()}>
+                    <Button variant="outline" size="icon" onClick={() => openEditDrawer(businessUnit)}>
+                      <Edit3 className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="icon" onClick={() => { setDeletingBusinessUnit(businessUnit); setDeleteOpen(true) }}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
-            )}
+            ))}
           </TableBody>
         </Table>
-      </div>
+        ) : null}
+      </MasterTable>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
@@ -203,14 +204,26 @@ export default function BusinessUnits() {
       />
 
       {deletingBusinessUnit && (
-        <BusinessUnitDeleteDialog
-          businessUnit={deletingBusinessUnit}
+        <DeleteDialog
+          entityType="business unit"
+          entityName={deletingBusinessUnit.name}
           open={deleteOpen}
           onOpenChange={(open) => {
             setDeleteOpen(open)
             if (!open) setDeletingBusinessUnit(undefined)
           }}
-          onConfirm={confirmDelete}
+          onConfirm={(action) => {
+            if (action === "archive") {
+              updateBusinessUnits((current) =>
+                current.map((item) => (item.id === deletingBusinessUnit.id ? { ...item, status: "Inactive" } : item))
+              )
+              setBusinessUnits(getBusinessUnits())
+              setDeleteOpen(false)
+              setDeletingBusinessUnit(undefined)
+              return
+            }
+            confirmDelete()
+          }}
         />
       )}
     </OrgLayout>

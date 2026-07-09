@@ -18,6 +18,8 @@ export interface Department {
   updatedAt: string
 }
 
+export const DEPARTMENT_STATUS_OPTIONS = ["Active", "Inactive", "Archived"] as const
+
 export type DepartmentFormValues = {
   name: string
   code: string

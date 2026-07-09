@@ -1,16 +1,13 @@
 import * as React from "react"
-import { Edit3, MapPin, Plus, Search, Trash2, ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight, Edit3, MapPin, Plus, Trash2 } from "lucide-react"
 import { useLocation } from "wouter"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { OrgLayout } from "../components/OrgLayout"
-import { OrgPageHeader } from "../components/OrgPageHeader"
+import { OrgLayout, OrgPageHeader, Filters, MasterTable, StatusBadge, EmptyState } from "../index"
 import { LocationDrawer } from "../locations/components/LocationDrawer"
 import { type LocationFormValues, createEmptyLocationFormValues, getLocations, updateLocations, type LocationRecord } from "../locations/data/locations"
-import { getOrganizationBusinessUnitOptions } from "../data/organizationData"
+import { businessUnits } from "../locations/data/locations"
 
 export default function Locations() {
   const [, navigate] = useLocation()
@@ -100,18 +97,15 @@ export default function Locations() {
         }
       />
 
-      <div className="mb-6 grid gap-4 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
-        <label className="relative block">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search by name, code, city, or business unit"
-            className="pl-9"
-          />
-        </label>
+      <Filters
+        search={search}
+        onSearchChange={setSearch}
+        onClear={() => setSearch("")}
+        placeholder="Search by name, code, city, or business unit"
+        searchClassName="relative min-w-[260px] flex-1"
+      >
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger>
+          <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
@@ -121,34 +115,44 @@ export default function Locations() {
           </SelectContent>
         </Select>
         <Select value={buFilter} onValueChange={setBuFilter}>
-          <SelectTrigger>
+          <SelectTrigger className="w-[210px]">
             <SelectValue placeholder="Filter by business unit" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All business units</SelectItem>
-            <SelectItem value="Technology BU">Technology BU</SelectItem>
-            <SelectItem value="Commerce BU">Commerce BU</SelectItem>
-            <SelectItem value="Services BU">Services BU</SelectItem>
-            <SelectItem value="Enterprise BU">Enterprise BU</SelectItem>
+            {businessUnits.map((businessUnit) => (
+              <SelectItem key={businessUnit} value={businessUnit}>
+                {businessUnit}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
-      </div>
+      </Filters>
 
-      <div className="overflow-hidden rounded-xl border bg-card">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Location</TableHead>
-              <TableHead>Code</TableHead>
-              <TableHead>City</TableHead>
-              <TableHead>Business Unit</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {visibleLocations.length > 0 ? (
-              visibleLocations.map((location) => (
+      <MasterTable
+        emptyState={
+          <EmptyState
+            icon={MapPin}
+            title="No locations found"
+            description="Try adjusting your search or filters, or create a new location."
+            action={{ label: "Add Location", onClick: openCreateDrawer, icon: Plus }}
+          />
+        }
+      >
+        {visibleLocations.length > 0 ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Location</TableHead>
+                <TableHead>Code</TableHead>
+                <TableHead>City</TableHead>
+                <TableHead>Business Unit</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {visibleLocations.map((location) => (
                 <TableRow key={location.id} className="cursor-pointer" onClick={() => navigate(`/organization/locations/${location.id}`)}>
                   <TableCell>
                     <div>
@@ -160,7 +164,7 @@ export default function Locations() {
                   <TableCell>{location.city}</TableCell>
                   <TableCell>{location.businessUnit}</TableCell>
                   <TableCell>
-                    <Badge variant={location.status === "Active" ? "default" : "secondary"}>{location.status}</Badge>
+                    <StatusBadge status={location.status} />
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2" onClick={(event) => event.stopPropagation()}>
@@ -173,17 +177,11 @@ export default function Locations() {
                     </div>
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={6} className="py-12 text-center text-sm text-muted-foreground">
-                  No locations match the current filters.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ))}
+            </TableBody>
+          </Table>
+        ) : null}
+      </MasterTable>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">

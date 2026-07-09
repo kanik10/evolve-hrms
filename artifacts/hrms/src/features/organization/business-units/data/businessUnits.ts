@@ -1,71 +1,22 @@
-export type BusinessUnitStatus = "Active" | "Inactive"
+import {
+  organizationBusinessUnits,
+  organizationBusinessUnitHeads,
+  type OrganizationBusinessUnit,
+} from "../../data/organizationData"
 
-export type BusinessUnitRecord = {
-  id: string
-  name: string
-  code: string
-  head: string
-  description: string
-  status: BusinessUnitStatus
-  departments: string[]
-  locations: string[]
-  costCenters: string[]
-}
+export type BusinessUnitStatus = OrganizationBusinessUnit["status"]
+
+export type BusinessUnitRecord = OrganizationBusinessUnit
 
 export type BusinessUnitFormValues = Omit<BusinessUnitRecord, "id" | "departments" | "locations" | "costCenters">
 
-export const initialBusinessUnits: BusinessUnitRecord[] = [
-  {
-    id: "BU01",
-    name: "Technology BU",
-    code: "TECH",
-    head: "Rahul Sharma",
-    description: "Leads software engineering, product, and platform initiatives.",
-    status: "Active",
-    departments: ["Engineering", "Product", "IT"],
-    locations: ["Mumbai HQ", "Bangalore Tech Park"],
-    costCenters: ["Eng Core", "Platform Ops"],
-  },
-  {
-    id: "BU02",
-    name: "Commerce BU",
-    code: "COMM",
-    head: "Sneha Patel",
-    description: "Covers sales, marketing, and customer success operations.",
-    status: "Active",
-    departments: ["Sales", "Marketing"],
-    locations: ["Delhi NCR"],
-    costCenters: ["Mkt & Sales"],
-  },
-  {
-    id: "BU03",
-    name: "Services BU",
-    code: "SRV",
-    head: "Vikram Reddy",
-    description: "Oversees implementation, support, and delivery services.",
-    status: "Inactive",
-    departments: ["Operations", "Finance"],
-    locations: ["Hyderabad Campus"],
-    costCenters: ["Operations"],
-  },
-  {
-    id: "BU04",
-    name: "Enterprise BU",
-    code: "ENT",
-    head: "Anjali Desai",
-    description: "Targets large strategic accounts and enterprise programs.",
-    status: "Active",
-    departments: ["Design", "Finance"],
-    locations: ["Pune Office"],
-    costCenters: ["Admin Setup"],
-  },
-]
+export const initialBusinessUnits: BusinessUnitRecord[] = [...organizationBusinessUnits]
 
-export const businessUnitHeads = ["Rahul Sharma", "Sneha Patel", "Vikram Reddy", "Anjali Desai", "Priya Singh"]
+export const businessUnitHeads = [...organizationBusinessUnitHeads]
 
-export const availableDepartments = ["Engineering", "Product", "IT", "Sales", "Marketing", "Operations", "Finance", "Design", "HR"]
-export const availableLocations = ["Mumbai HQ", "Bangalore Tech Park", "Delhi NCR", "Hyderabad Campus", "Pune Office"]
-export const availableCostCenters = ["Eng Core", "Platform Ops", "Mkt & Sales", "Operations", "Admin Setup"]
+export const availableDepartments = Array.from(new Set(organizationBusinessUnits.flatMap((unit) => unit.departments)))
+export const availableLocations = Array.from(new Set(organizationBusinessUnits.flatMap((unit) => unit.locations)))
+export const availableCostCenters = Array.from(new Set(organizationBusinessUnits.flatMap((unit) => unit.costCenters)))
 
 export function createEmptyBusinessUnitFormValues(): BusinessUnitFormValues {
   return {

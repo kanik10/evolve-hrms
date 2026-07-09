@@ -70,6 +70,21 @@ export interface OrganizationEmployee {
   salaryStructureId?: string
 }
 
+export interface OrganizationDesignation {
+  id: string
+  code: string
+  name: string
+  departmentId: string
+  department: string
+  gradeId: string
+  grade: string
+  description: string
+  status: "Active" | "Inactive" | "Archived"
+  employeeCount: number
+  createdAt: string
+  updatedAt: string
+}
+
 export interface OrganizationLeavePolicy {
   id: string
   policyName: string
@@ -149,7 +164,7 @@ export const organizationBusinessUnits: OrganizationBusinessUnit[] = [
     status: "Active",
     departments: ["Engineering", "Product", "IT"],
     locations: ["Mumbai HQ", "Bangalore Tech Park"],
-    costCenters: ["Eng Core", "Platform Ops"],
+    costCenters: ["Eng Core"],
   },
   {
     id: "BU02",
@@ -189,8 +204,8 @@ export const organizationBusinessUnits: OrganizationBusinessUnit[] = [
 export const organizationCostCenters: OrganizationCostCenter[] = [
   {
     id: "CC1",
-    name: "Engineering Core",
-    code: "ENG-01",
+    name: "Eng Core",
+    code: "CC001",
     department: "Engineering",
     businessUnit: "Technology BU",
     status: "Active",
@@ -198,17 +213,17 @@ export const organizationCostCenters: OrganizationCostCenter[] = [
   },
   {
     id: "CC2",
-    name: "Marketing & Sales",
-    code: "MKT-02",
-    department: "Sales",
+    name: "Mkt & Sales",
+    code: "CC002",
+    department: "Marketing",
     businessUnit: "Commerce BU",
     status: "Active",
     budget: "₹2.2Cr",
   },
   {
     id: "CC3",
-    name: "Operations Support",
-    code: "OPS-03",
+    name: "Operations",
+    code: "CC003",
     department: "Operations",
     businessUnit: "Services BU",
     status: "Inactive",
@@ -216,8 +231,8 @@ export const organizationCostCenters: OrganizationCostCenter[] = [
   },
   {
     id: "CC4",
-    name: "Admin & Finance",
-    code: "ADM-04",
+    name: "Admin Setup",
+    code: "CC004",
     department: "Finance",
     businessUnit: "Enterprise BU",
     status: "Active",
@@ -508,6 +523,219 @@ export const organizationEmployees: OrganizationEmployee[] = [
   { id: "EMP012", name: "Nisha Kapoor", department: "Engineering", designation: "Software Engineer", joiningDate: "01 Jul 2023", salary: "₹12,00,000", status: "Active", departmentId: "dept-001", location: "Bangalore Tech Park", leavePolicyId: "LP2", salaryStructureId: "SAL1" },
 ]
 
+export const organizationDesignations: OrganizationDesignation[] = [
+  {
+    id: "des-001",
+    code: "SWE",
+    name: "Software Engineer",
+    departmentId: "dept-001",
+    department: "Engineering",
+    gradeId: "G2",
+    grade: "Senior Executive",
+    description: "Designs, develops, and maintains software systems, APIs, and applications for the organization.",
+    status: "Active",
+    employeeCount: 1,
+    createdAt: "2021-01-15",
+    updatedAt: "2024-03-20",
+  },
+  {
+    id: "des-002",
+    code: "SR-ENG",
+    name: "Senior Engineer",
+    departmentId: "dept-001",
+    department: "Engineering",
+    gradeId: "G3",
+    grade: "Assistant Manager",
+    description: "Leads technical solutioning, reviews code, and mentors junior engineers while driving platform reliability.",
+    status: "Active",
+    employeeCount: 1,
+    createdAt: "2021-01-15",
+    updatedAt: "2024-03-20",
+  },
+  {
+    id: "des-003",
+    code: "MGR",
+    name: "Manager",
+    departmentId: "dept-001",
+    department: "Engineering",
+    gradeId: "G4",
+    grade: "Manager",
+    description: "Manages team operations, drives project delivery, and owns performance reviews for direct reports.",
+    status: "Active",
+    employeeCount: 3,
+    createdAt: "2021-01-15",
+    updatedAt: "2024-03-20",
+  },
+  {
+    id: "des-004",
+    code: "DIR",
+    name: "Director",
+    departmentId: "dept-001",
+    department: "Engineering",
+    gradeId: "G6",
+    grade: "Director",
+    description: "Provides strategic technical direction, oversees multiple teams, and represents engineering at leadership level.",
+    status: "Active",
+    employeeCount: 1,
+    createdAt: "2021-01-15",
+    updatedAt: "2024-03-20",
+  },
+  {
+    id: "des-005",
+    code: "PM",
+    name: "Product Manager",
+    departmentId: "dept-002",
+    department: "Product",
+    gradeId: "G4",
+    grade: "Manager",
+    description: "Defines product roadmap, prioritizes features, and aligns stakeholder expectations across the product lifecycle.",
+    status: "Active",
+    employeeCount: 1,
+    createdAt: "2021-01-15",
+    updatedAt: "2024-02-10",
+  },
+  {
+    id: "des-006",
+    code: "VP-MKT",
+    name: "VP Marketing",
+    departmentId: "dept-003",
+    department: "Marketing",
+    gradeId: "G7",
+    grade: "VP",
+    description: "Leads all marketing functions including brand strategy, demand generation, and corporate communications.",
+    status: "Active",
+    employeeCount: 1,
+    createdAt: "2021-01-15",
+    updatedAt: "2024-01-08",
+  },
+  {
+    id: "des-007",
+    code: "MKT-SP",
+    name: "Marketing Specialist",
+    departmentId: "dept-003",
+    department: "Marketing",
+    gradeId: "G2",
+    grade: "Senior Executive",
+    description: "Executes marketing campaigns, manages digital content, and tracks campaign performance metrics.",
+    status: "Active",
+    employeeCount: 5,
+    createdAt: "2021-01-15",
+    updatedAt: "2024-01-08",
+  },
+  {
+    id: "des-008",
+    code: "HRBP",
+    name: "HR Business Partner",
+    departmentId: "dept-004",
+    department: "HR",
+    gradeId: "G4",
+    grade: "Manager",
+    description: "Partners with business leaders to drive talent strategy, employee engagement, and organizational development.",
+    status: "Active",
+    employeeCount: 1,
+    createdAt: "2021-01-15",
+    updatedAt: "2023-11-15",
+  },
+  {
+    id: "des-009",
+    code: "FIN-CNT",
+    name: "Finance Controller",
+    departmentId: "dept-005",
+    department: "Finance",
+    gradeId: "G5",
+    grade: "Senior Manager",
+    description: "Manages financial reporting, statutory compliance, internal controls, and audit coordination.",
+    status: "Active",
+    employeeCount: 1,
+    createdAt: "2021-01-15",
+    updatedAt: "2024-02-28",
+  },
+  {
+    id: "des-010",
+    code: "ANLST",
+    name: "Analyst",
+    departmentId: "dept-005",
+    department: "Finance",
+    gradeId: "G1",
+    grade: "Executive",
+    description: "Analyzes financial and business data, prepares management reports, and supports decision-making.",
+    status: "Active",
+    employeeCount: 4,
+    createdAt: "2021-01-15",
+    updatedAt: "2024-02-28",
+  },
+  {
+    id: "des-011",
+    code: "OPS-LD",
+    name: "Operations Lead",
+    departmentId: "dept-006",
+    department: "Operations",
+    gradeId: "G3",
+    grade: "Assistant Manager",
+    description: "Oversees day-to-day operational workflows, vendor coordination, and process improvement initiatives.",
+    status: "Active",
+    employeeCount: 1,
+    createdAt: "2021-03-10",
+    updatedAt: "2024-03-05",
+  },
+  {
+    id: "des-012",
+    code: "SALES-ASC",
+    name: "Sales Associate",
+    departmentId: "dept-007",
+    department: "Sales",
+    gradeId: "G1",
+    grade: "Executive",
+    description: "Manages client relationships, sources new business opportunities, and achieves assigned revenue targets.",
+    status: "Active",
+    employeeCount: 1,
+    createdAt: "2021-01-15",
+    updatedAt: "2024-03-18",
+  },
+  {
+    id: "des-013",
+    code: "LGL-CNS",
+    name: "Legal Counsel",
+    departmentId: "dept-008",
+    department: "Legal",
+    gradeId: "G4",
+    grade: "Manager",
+    description: "Provides legal advice, drafts contracts, handles IP matters, and ensures regulatory compliance.",
+    status: "Active",
+    employeeCount: 1,
+    createdAt: "2021-04-01",
+    updatedAt: "2023-12-10",
+  },
+  {
+    id: "des-014",
+    code: "DES",
+    name: "Designer",
+    departmentId: "dept-009",
+    department: "Design",
+    gradeId: "G2",
+    grade: "Senior Executive",
+    description: "Creates user interfaces, visual assets, and design systems while ensuring brand consistency.",
+    status: "Active",
+    employeeCount: 1,
+    createdAt: "2021-06-15",
+    updatedAt: "2024-01-22",
+  },
+  {
+    id: "des-015",
+    code: "SYS-ADM",
+    name: "System Admin",
+    departmentId: "dept-010",
+    department: "IT",
+    gradeId: "G2",
+    grade: "Senior Executive",
+    description: "Manages IT infrastructure, handles user access provisioning, and maintains security configurations.",
+    status: "Inactive",
+    employeeCount: 1,
+    createdAt: "2021-01-15",
+    updatedAt: "2024-03-01",
+  },
+]
+
 export const organizationLeavePolicies: OrganizationLeavePolicy[] = [
   {
     id: "LP1",
@@ -594,6 +822,37 @@ export const organizationHolidays: OrganizationHoliday[] = [
   { id: "H01", name: "Republic Day", date: "26 Jan 2024", type: "National", status: "Active" },
   { id: "H02", name: "Holi", date: "25 Mar 2024", type: "Festival", status: "Active" },
   { id: "H03", name: "Good Friday", date: "29 Mar 2024", type: "Festival", status: "Active" },
+]
+
+export const chartDataHeadcount = [
+  { name: "Jan", value: 2400 },
+  { name: "Feb", value: 2450 },
+  { name: "Mar", value: 2500 },
+  { name: "Apr", value: 2580 },
+  { name: "May", value: 2600 },
+  { name: "Jun", value: 2650 },
+  { name: "Jul", value: 2700 },
+  { name: "Aug", value: 2750 },
+  { name: "Sep", value: 2780 },
+  { name: "Oct", value: 2800 },
+  { name: "Nov", value: 2820 },
+  { name: "Dec", value: 2847 },
+]
+
+export const chartDataDepartment = [
+  { name: "Engineering", value: 120 },
+  { name: "Sales", value: 89 },
+  { name: "Operations", value: 67 },
+  { name: "Product", value: 45 },
+  { name: "IT", value: 41 },
+]
+
+export const chartDataAttendance = [
+  { name: "Mon", value: 95 },
+  { name: "Tue", value: 96 },
+  { name: "Wed", value: 94 },
+  { name: "Thu", value: 93 },
+  { name: "Fri", value: 91 },
 ]
 
 export function getOrganizationBusinessUnitOptions() {
