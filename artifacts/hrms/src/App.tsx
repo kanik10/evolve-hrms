@@ -5,20 +5,23 @@ import NotFound from '@/pages/not-found';
 import { Route, Switch, Router as WouterRouter, Redirect } from 'wouter';
 
 import Dashboard from './pages/Dashboard';
-import Departments from './pages/organization/Departments';
-import Designations from './pages/organization/Designations';
-import Locations from './pages/organization/Locations';
-import BusinessUnits from './pages/organization/BusinessUnits';
-import { 
-  CostCenters, 
-  Grades, 
-  EmploymentTypes, 
-  HolidayCalendar, 
-  ShiftManagement, 
-  LeavePolicies, 
-  SalaryStructures 
-} from './pages/organization/GenericPages';
+import {
+  CompanyProfile,
+  Departments,
+  Designations,
+  Locations,
+  BusinessUnits,
+  CostCenters,
+  Grades,
+  EmploymentTypes,
+  HolidayCalendar,
+  ShiftManagement,
+  LeavePolicies,
+  SalaryStructures,
+} from './features/organization';
 
+import DesignationDetailPage from './features/organization/designations/pages/DesignationDetailPage';
+import DepartmentDetailPage from './features/organization/departments/pages/DepartmentDetailPage';
 import Employees from './pages/Employees';
 import Import from './pages/Import';
 import SkeletonPage from './pages/SkeletonPage';
@@ -34,10 +37,10 @@ function Router() {
       
       <Route path="/dashboard" component={Dashboard} />
       
-      <Route path="/organization/company">
-        <SkeletonPage title="Company Profile" description="Manage main company details and statutory info." />
-      </Route>
+      <Route path="/organization/company" component={CompanyProfile} />
+      <Route path="/organization/departments/:id" component={DepartmentDetailPage} />
       <Route path="/organization/departments" component={Departments} />
+      <Route path="/organization/designations/:id" component={DesignationDetailPage} />
       <Route path="/organization/designations" component={Designations} />
       <Route path="/organization/locations" component={Locations} />
       <Route path="/organization/business-units" component={BusinessUnits} />
