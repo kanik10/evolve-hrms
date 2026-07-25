@@ -1,7 +1,8 @@
 import * as React from "react"
 import { Badge } from "@/components/ui/badge"
 
-type StatusTone = "success" | "warning" | "destructive" | "secondary" | "outline"
+type BadgeVariant = React.ComponentProps<typeof Badge>["variant"]
+type StatusTone = NonNullable<BadgeVariant>
 
 const toneByStatus: Record<string, StatusTone> = {
   Active: "success",
@@ -21,5 +22,5 @@ interface StatusBadgeProps {
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   const variant = toneByStatus[status] ?? "secondary"
 
-  return <Badge variant={variant as React.ComponentProps<typeof Badge>["variant"]} className={className}>{status}</Badge>
+  return <Badge variant={variant} className={className}>{status}</Badge>
 }

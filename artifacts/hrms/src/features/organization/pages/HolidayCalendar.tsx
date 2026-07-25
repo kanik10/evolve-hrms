@@ -2,7 +2,7 @@ import * as React from "react"
 import { CalendarDays, ChevronLeft, ChevronRight, Edit3, Plus, Search, Trash2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { Calendar, CalendarDayButton } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -170,13 +170,14 @@ export default function HolidayCalendar() {
                 holiday: "bg-primary/10 text-primary font-semibold",
               }}
               components={{
-                DayContent: ({ date }) => {
+                DayButton: ({ day, ...props }) => {
+                  const date = day.date
                   const holiday = filteredHolidays.find((item) => new Date(item.date).toDateString() === date.toDateString())
                   return (
-                    <div className="flex h-full flex-col items-center justify-start gap-1 p-1">
+                    <CalendarDayButton day={day} {...props}>
                       <span>{date.getDate()}</span>
                       {holiday ? <span className="text-[10px] font-medium text-primary">{holiday.name}</span> : null}
-                    </div>
+                    </CalendarDayButton>
                   )
                 },
               }}

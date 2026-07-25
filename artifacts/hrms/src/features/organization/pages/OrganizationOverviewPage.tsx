@@ -3,14 +3,9 @@ import { useLocation } from "wouter"
 import {
   BarChart3,
   Building2,
-  CalendarDays,
-  CircleDollarSign,
-  GitBranch,
   Landmark,
   MapPin,
-  Network,
   Plus,
-  Users,
 } from "lucide-react"
 import {
   Bar,
@@ -26,23 +21,20 @@ import {
 } from "recharts"
 
 import { ChartCard } from "@/components/ChartCard"
-import { StatCard } from "@/components/StatCard"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
+  ActivityTimeline,
+  OrganizationMetricsGrid,
   OrgLayout,
   OrgPageHeader,
 } from "../index"
 import {
   chartDataDepartment,
-  organizationBusinessUnits,
-  organizationCostCenters,
-  organizationDepartments,
   organizationEmployees,
-  organizationLeavePolicies,
   organizationLocations,
-  organizationSalaryStructures,
 } from "../data/organizationData"
+import { mockOrganizationActivities } from "../data/activity"
 import { getHolidays } from "../holiday-calendar/data/holidays"
 
 const chartColors = [
@@ -57,29 +49,6 @@ const employeesByLocation = organizationLocations.map((location) => ({
   name: location.name,
   value: organizationEmployees.filter((employee) => employee.location === location.name).length,
 }))
-
-const recentActivity = [
-  {
-    title: "Department created",
-    description: `${organizationDepartments[0].name} was added to the organization structure.`,
-    time: "Today, 10:30 AM",
-  },
-  {
-    title: "Business Unit updated",
-    description: `${organizationBusinessUnits[0].name} reporting lines were refreshed.`,
-    time: "Yesterday, 4:15 PM",
-  },
-  {
-    title: "Leave Policy changed",
-    description: `${organizationLeavePolicies[0].policyName} entitlement settings were revised.`,
-    time: "18 Jul 2026",
-  },
-  {
-    title: "Salary Structure edited",
-    description: `${organizationSalaryStructures[0].structureName} components were updated.`,
-    time: "15 Jul 2026",
-  },
-]
 
 function formatHolidayDate(date: string) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -125,18 +94,7 @@ export default function OrganizationOverviewPage() {
         description="A consolidated view of departments, locations, business units, policies, and structural activity."
       />
 
-      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        <StatCard title="Total Departments" value={organizationDepartments.length} icon={<Network className="h-5 w-5" />} />
-        <StatCard title="Total Business Units" value={organizationBusinessUnits.length} icon={<Building2 className="h-5 w-5" />} />
-        <StatCard title="Total Locations" value={organizationLocations.length} icon={<MapPin className="h-5 w-5" />} />
-        <StatCard title="Total Cost Centers" value={organizationCostCenters.length} icon={<CircleDollarSign className="h-5 w-5" />} />
-        <StatCard title="Total Employees" value={organizationEmployees.length} icon={<Users className="h-5 w-5" />} />
-        <StatCard
-          title="Active Leave Policies"
-          value={organizationLeavePolicies.filter((policy) => policy.status === "Active").length}
-          icon={<CalendarDays className="h-5 w-5" />}
-        />
-      </div>
+      <OrganizationMetricsGrid className="mb-8" />
 
       <div className="mb-8 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <ChartCard title="Employees by Department" description="Headcount across core departments" className="xl:col-span-2">
@@ -194,22 +152,7 @@ export default function OrganizationOverviewPage() {
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
         <ChartCard title="Recent Organization Activity" className="xl:col-span-2">
-          <div className="mt-2 divide-y">
-            {recentActivity.map((activity) => (
-              <div key={activity.title} className="flex flex-col gap-2 py-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex gap-3">
-                  <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <GitBranch className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{activity.title}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">{activity.description}</p>
-                  </div>
-                </div>
-                <span className="shrink-0 text-xs text-muted-foreground">{activity.time}</span>
-              </div>
-            ))}
-          </div>
+          <ActivityTimeline activities={mockOrganizationActivities} />
         </ChartCard>
 
         <div className="space-y-6">

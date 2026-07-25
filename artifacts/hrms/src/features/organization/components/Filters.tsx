@@ -17,7 +17,13 @@ export function Filters({ search, onSearchChange, onClear, children, placeholder
     <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-center">
       <div className={searchClassName ?? "relative min-w-[220px] flex-1"}>
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input value={search} onChange={(event) => onSearchChange(event.target.value)} placeholder={placeholder} className="pl-9" />
+        <Input
+          value={search}
+          onChange={(event) => onSearchChange(event.target.value)}
+          placeholder={placeholder}
+          className="pl-9"
+          aria-label={placeholder}
+        />
       </div>
       <div className="flex flex-wrap items-center gap-3">{children}</div>
       {onClear && search.trim() && (

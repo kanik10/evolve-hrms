@@ -22,13 +22,13 @@ export default function Designations() {
   const [isSheetOpen, setIsSheetOpen] = React.useState(false)
 
   const filteredData = mockDesignations.filter(d => 
-    d.title.toLowerCase().includes(searchTerm.toLowerCase())
+    d.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const columns = [
     { header: "ID", accessor: (row: any) => <span className="text-muted-foreground font-mono">{row.id}</span> },
-    { header: "Designation Title", accessor: (row: any) => <span className="font-medium text-foreground">{row.title}</span> },
-    { header: "Level", accessor: (row: any) => <Badge variant="outline">{row.level}</Badge> },
+    { header: "Designation Title", accessor: (row: any) => <span className="font-medium text-foreground">{row.name}</span> },
+    { header: "Level", accessor: (row: any) => <Badge variant="outline">{row.grade}</Badge> },
     { header: "Department Ref", accessor: (row: any) => row.departmentId },
     { header: "Status", accessor: (row: any) => (
       <Badge variant={row.status === 'Active' ? 'success' : 'secondary'}>{row.status}</Badge>

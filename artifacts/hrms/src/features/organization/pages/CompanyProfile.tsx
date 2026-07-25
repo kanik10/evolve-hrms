@@ -12,9 +12,6 @@ import {
   Save,
   RotateCcw,
   Upload,
-  CalendarClock,
-  Globe2,
-  Landmark,
   Mail,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -45,6 +42,11 @@ import { FormSection } from "../components/FormSection"
 
 // ── Validation Schema ────────────────────────────────────────────────────────
 
+const isValidPhone = (value: string) => {
+  const digits = value.replace(/\D/g, "")
+  return digits.length >= 10 && digits.length <= 15
+}
+
 const schema = z
   .object({
     companyName: z.string().min(1, "Company name is required"),
@@ -63,7 +65,10 @@ const schema = z
       .string()
       .min(1, "Email address is required")
       .email("Enter a valid email address"),
-    phoneNumber: z.string().min(10, "Enter a valid phone number"),
+    phoneNumber: z
+      .string()
+      .min(1, "Phone number is required")
+      .refine(isValidPhone, "Enter a valid phone number"),
 
     address: z.string().min(1, "Registered address is required"),
     city: z.string().min(1, "City is required"),
@@ -118,7 +123,10 @@ const schema = z
     brandAccentColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Use a valid hex color"),
     hrContactName: z.string().min(1, "HR contact name is required"),
     hrContactEmail: z.string().email("Enter a valid HR email address"),
-    hrContactPhone: z.string().min(10, "Enter a valid HR contact number"),
+    hrContactPhone: z
+      .string()
+      .min(1, "HR contact number is required")
+      .refine(isValidPhone, "Enter a valid HR contact number"),
     financeContactName: z.string().min(1, "Finance contact name is required"),
     financeContactEmail: z.string().email("Enter a valid finance email address"),
     supportEmail: z.string().email("Enter a valid support email address"),
@@ -203,6 +211,34 @@ const DAYS_OF_WEEK = [
   "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday",
 ]
 
+const LANGUAGES = [
+  { value: "en-IN", label: "English (India)" },
+  { value: "en-US", label: "English (United States)" },
+  { value: "en-GB", label: "English (United Kingdom)" },
+  { value: "hi-IN", label: "Hindi (India)" },
+]
+
+const DATE_FORMATS = [
+  { value: "dd/MM/yyyy", label: "DD/MM/YYYY" },
+  { value: "MM/dd/yyyy", label: "MM/DD/YYYY" },
+  { value: "yyyy-MM-dd", label: "YYYY-MM-DD" },
+  { value: "dd-MMM-yyyy", label: "DD-MMM-YYYY" },
+]
+
+const TIME_FORMATS = [
+  { value: "12h", label: "12-hour clock" },
+  { value: "24h", label: "24-hour clock" },
+]
+
+const NUMBER_FORMATS = [
+  { value: "en-IN", label: "1,23,456.78" },
+  { value: "en-US", label: "123,456.78" },
+  { value: "de-DE", label: "123.456,78" },
+]
+
+const MAX_LOGO_SIZE = 2 * 1024 * 1024
+const LOGO_TYPES = ["image/png", "image/svg+xml", "image/jpeg", "image/webp"]
+
 const DEFAULT_VALUES: FormValues = {
   companyName: "",
   legalName: "",
@@ -217,12 +253,31 @@ const DEFAULT_VALUES: FormValues = {
   pincode: "",
   gstNumber: "",
   panNumber: "",
+  cinNumber: "",
+  tanNumber: "",
+  pfRegistrationNumber: "",
+  esiRegistrationNumber: "",
+  professionalTaxNumber: "",
   currency: "INR",
   timezone: "Asia/Kolkata",
   financialYear: "apr-mar",
+  language: "en-IN",
+  dateFormat: "dd/MM/yyyy",
+  timeFormat: "24h",
+  numberFormat: "en-IN",
   workingDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
   businessHoursStart: "09:00",
   businessHoursEnd: "18:00",
+  brandDisplayName: "",
+  brandTagline: "",
+  brandPrimaryColor: "#2563eb",
+  brandAccentColor: "#16a34a",
+  hrContactName: "",
+  hrContactEmail: "",
+  hrContactPhone: "",
+  financeContactName: "",
+  financeContactEmail: "",
+  supportEmail: "",
 }
 
 // ── Logo Upload ──────────────────────────────────────────────────────────────
@@ -231,16 +286,28 @@ function LogoUpload({
   preview,
   onFileSelect,
   onRemove,
+  onError,
 }: {
   preview: string | null
   onFileSelect: (dataUrl: string) => void
   onRemove: () => void
+  onError: (message: string) => void
 }) {
   const inputRef = React.useRef<HTMLInputElement>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    if (!LOGO_TYPES.includes(file.type)) {
+      onError("Upload a PNG, SVG, JPEG, or WEBP logo.")
+      e.target.value = ""
+      return
+    }
+    if (file.size > MAX_LOGO_SIZE) {
+      onError("Logo must be 2 MB or smaller.")
+      e.target.value = ""
+      return
+    }
     const reader = new FileReader()
     reader.onload = () => {
       if (typeof reader.result === "string") onFileSelect(reader.result)
@@ -443,7 +510,93 @@ export default function CompanyProfile() {
               preview={logoPreview}
               onFileSelect={setLogoPreview}
               onRemove={() => setLogoPreview(null)}
+              onError={(message) =>
+                toast({
+                  title: "Logo not uploaded",
+                  description: message,
+                  variant: "destructive",
+                })
+              }
             />
+
+            <div className="mt-6 grid gap-5 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="brandDisplayName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Brand Display Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Acme HR" {...field} />
+                    </FormControl>
+                    <FormDescription>Shown in employee-facing documents and portals</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="brandTagline"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Brand Tagline</FormLabel>
+                    <FormControl>
+                      <Input placeholder="People first, always" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="brandPrimaryColor"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Primary Brand Color</FormLabel>
+                    <div className="flex gap-2">
+                      <FormControl>
+                        <Input className="font-mono uppercase" placeholder="#2563eb" {...field} />
+                      </FormControl>
+                      <Input
+                        type="color"
+                        aria-label="Pick primary brand color"
+                        className="h-10 w-12 shrink-0 cursor-pointer p-1"
+                        value={/^#[0-9A-Fa-f]{6}$/.test(field.value) ? field.value : "#000000"}
+                        onChange={field.onChange}
+                      />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="brandAccentColor"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Accent Brand Color</FormLabel>
+                    <div className="flex gap-2">
+                      <FormControl>
+                        <Input className="font-mono uppercase" placeholder="#16a34a" {...field} />
+                      </FormControl>
+                      <Input
+                        type="color"
+                        aria-label="Pick accent brand color"
+                        className="h-10 w-12 shrink-0 cursor-pointer p-1"
+                        value={/^#[0-9A-Fa-f]{6}$/.test(field.value) ? field.value : "#000000"}
+                        onChange={field.onChange}
+                      />
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </FormSection>
 
           {/* Section 3 – Contact Information */}
@@ -671,6 +824,93 @@ export default function CompanyProfile() {
                 )}
               />
             </div>
+
+            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="cinNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>CIN Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="U72900MH2020PTC123456"
+                        className="font-mono tracking-widest uppercase"
+                        {...field}
+                        onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                      />
+                    </FormControl>
+                    <FormDescription>Corporate identification number</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="tanNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>TAN Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="ABCD12345E"
+                        className="font-mono tracking-widest uppercase"
+                        maxLength={10}
+                        {...field}
+                        onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                      />
+                    </FormControl>
+                    <FormDescription>Tax deduction and collection account number</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="mt-5 grid gap-5 sm:grid-cols-3">
+              <FormField
+                control={form.control}
+                name="pfRegistrationNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>PF Registration Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="MH/BAN/1234567" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="esiRegistrationNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>ESI Registration Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="31-00-123456-000-0001" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="professionalTaxNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Professional Tax Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="PT/MH/123456" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </FormSection>
 
           {/* Section 6 – Regional Settings */}
@@ -794,6 +1034,116 @@ export default function CompanyProfile() {
               </div>
             </div>
 
+            <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <FormField
+                control={form.control}
+                name="language"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Language <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select language" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {LANGUAGES.map((language) => (
+                          <SelectItem key={language.value} value={language.value}>
+                            {language.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="dateFormat"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Date Format <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select date format" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {DATE_FORMATS.map((format) => (
+                          <SelectItem key={format.value} value={format.value}>
+                            {format.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="timeFormat"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Time Format <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select time format" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {TIME_FORMATS.map((format) => (
+                          <SelectItem key={format.value} value={format.value}>
+                            {format.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="numberFormat"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Number Format <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select number format" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {NUMBER_FORMATS.map((format) => (
+                          <SelectItem key={format.value} value={format.value}>
+                            {format.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <div className="mt-5">
               <FormField
                 control={form.control}
@@ -801,39 +1151,152 @@ export default function CompanyProfile() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Working Days <span className="text-destructive">*</span>
+                      Working Days Calendar <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormDescription>
                       Select the standard working days for your organization
                     </FormDescription>
-                    <div className="mt-3 flex flex-wrap gap-2">
+                    <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
                       {DAYS_OF_WEEK.map((day) => {
                         const checked = field.value?.includes(day)
                         return (
                           <label
                             key={day}
                             className={cn(
-                              "flex cursor-pointer select-none items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors",
+                              "flex min-h-16 cursor-pointer select-none flex-col justify-between rounded-lg border p-3 text-sm font-medium transition-colors",
                               checked
                                 ? "border-primary bg-primary/5 text-primary"
                                 : "border-input text-muted-foreground hover:border-muted-foreground/50 hover:text-foreground"
                             )}
                           >
-                            <Checkbox
-                              checked={checked}
-                              onCheckedChange={(c) => {
-                                if (c) {
-                                  field.onChange([...field.value, day])
-                                } else {
-                                  field.onChange(field.value.filter((d) => d !== day))
-                                }
-                              }}
-                            />
-                            {day.slice(0, 3)}
+                            <span className="flex items-center justify-between gap-2">
+                              <span>{day.slice(0, 3)}</span>
+                              <Checkbox
+                                checked={checked}
+                                onCheckedChange={(c) => {
+                                  if (c) {
+                                    field.onChange([...field.value, day])
+                                  } else {
+                                    field.onChange(field.value.filter((d) => d !== day))
+                                  }
+                                }}
+                              />
+                            </span>
+                            <span className="text-xs font-normal">
+                              {checked ? "Working" : "Off"}
+                            </span>
                           </label>
                         )
                       })}
                     </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </FormSection>
+
+          {/* Section 7 - Company Contacts */}
+          <FormSection
+            icon={Mail}
+            title="Company Contacts"
+            description="Named contacts used for employee communication, payroll queries, and system notifications."
+          >
+            <div className="grid gap-5 sm:grid-cols-3">
+              <FormField
+                control={form.control}
+                name="hrContactName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      HR Contact Name <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Priya Sharma" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="hrContactEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      HR Contact Email <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="hr@company.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="hrContactPhone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      HR Contact Phone <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="tel" placeholder="+91 98765 43210" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="mt-5 grid gap-5 sm:grid-cols-3">
+              <FormField
+                control={form.control}
+                name="financeContactName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Finance Contact Name <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input placeholder="Arjun Mehta" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="financeContactEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Finance Contact Email <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="finance@company.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="supportEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Support Email <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="support@company.com" {...field} />
+                    </FormControl>
+                    <FormDescription>Used for employee portal help links</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

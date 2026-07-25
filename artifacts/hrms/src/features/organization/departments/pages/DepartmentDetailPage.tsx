@@ -455,7 +455,7 @@ function LocationsTab({ locationNames }: { locationNames: string[] }) {
           <CardContent className="pt-5 pb-5">
             <div className="mb-4 flex items-center justify-between gap-2">
               <Badge variant="outline" className="text-xs">
-                {loc.type}
+                {loc.code}
               </Badge>
               <Badge
                 variant={loc.status === "Active" ? "success" : "secondary"}

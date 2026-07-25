@@ -20,14 +20,52 @@ export { OrgPageHeader } from "./components/OrgPageHeader"
 export { OrgEmptyState } from "./components/OrgEmptyState"
 export { FormSection } from "./components/FormSection"
 export { OrgDeleteDialog } from "./components/OrgDeleteDialog"
-export { DetailLayout } from "./components/DetailLayout"
+export {
+  DetailActivityList,
+  DetailCard,
+  DetailFieldGrid,
+  DetailHistoryList,
+  DetailLayout,
+  StandardDetailView,
+  type DetailActivityEntry,
+  type DetailField,
+  type DetailHistoryEntry,
+  type StandardDetailModel,
+} from "./components/DetailLayout"
 export { DeleteDialog } from "./components/DeleteDialog"
 export { EmptyState } from "./components/EmptyState"
 export { Filters } from "./components/Filters"
 export { MasterForm } from "./components/MasterForm"
 export { MasterTable } from "./components/MasterTable"
 export { StatusBadge } from "./components/StatusBadge"
+export {
+  MasterActionButtons,
+  OrganizationMasterPage,
+  StatusFilter,
+  type OrganizationDrawerMode,
+  type OrganizationDrawerProps,
+  type OrganizationMasterPageProps,
+  type OrganizationStatusRecord,
+} from "./components/OrganizationMasterPage"
 export { RelationshipCard, type RelationshipItem } from "./components/RelationshipCard"
+export { ActivityTimeline, type ActivityTimelineProps } from "./components/ActivityTimeline"
+export {
+  AverageEmployeesPerDepartmentMetric,
+  BusinessUnitDistributionMetric,
+  DepartmentCountMetric,
+  EmployeeCountMetric,
+  HolidayCountMetric,
+  LeavePolicyCountMetric,
+  LocationDistributionMetric,
+  OrganizationMetricsGrid,
+  defaultOrganizationMetricsData,
+  getDefaultOrganizationMetricsData,
+  getOrganizationMetricsSummary,
+  type DistributionMetricItem,
+  type OrganizationMetricsData,
+  type OrganizationMetricsGridProps,
+  type OrganizationMetricsSummary,
+} from "./components/OrganizationMetrics"
 export { StandardMasterTable } from "./components/StandardMasterTable"
 export { default as DesignationDetailPage } from "./designations/pages/DesignationDetailPage"
 export { default as LocationDetailPage } from "./locations/pages/LocationDetailPage"

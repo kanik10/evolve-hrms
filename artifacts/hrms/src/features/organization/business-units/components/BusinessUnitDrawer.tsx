@@ -1,11 +1,10 @@
 import * as React from "react"
 import { Building2, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { MasterForm } from "../../components/MasterForm"
 import { type BusinessUnitFormValues, createEmptyBusinessUnitFormValues, businessUnitHeads } from "../data/businessUnits"
 
 interface BusinessUnitDrawerProps {
@@ -34,23 +33,16 @@ export function BusinessUnitDrawer({
   }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-xl overflow-y-auto">
-        <SheetHeader className="mb-6">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Building2 className="h-4 w-4" />
-            </div>
-            <div>
-              <SheetTitle>{mode === "create" ? "Add business unit" : "Edit business unit"}</SheetTitle>
-              <SheetDescription>
-                {mode === "create" ? "Create a new business unit and assign its leadership." : "Update the business unit details and ownership."}
-              </SheetDescription>
-            </div>
-          </div>
-        </SheetHeader>
-
-        <div className="space-y-5">
+    <MasterForm
+      open={open}
+      onOpenChange={onOpenChange}
+      icon={Building2}
+      title={mode === "create" ? "Add business unit" : "Edit business unit"}
+      description={mode === "create" ? "Create a new business unit and assign its leadership." : "Update the business unit details and ownership."}
+      cancelIcon={<X className="mr-2 h-4 w-4" />}
+      submitLabel={mode === "create" ? "Create business unit" : "Save changes"}
+      onSubmit={() => onSubmit(values)}
+    >
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="name">Business Unit</Label>
@@ -95,18 +87,6 @@ export function BusinessUnitDrawer({
               </SelectContent>
             </Select>
           </div>
-        </div>
-
-        <div className="mt-8 flex justify-end gap-3 border-t pt-6">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            <X className="mr-2 h-4 w-4" />
-            Cancel
-          </Button>
-          <Button onClick={() => onSubmit(values)}>
-            {mode === "create" ? "Create business unit" : "Save changes"}
-          </Button>
-        </div>
-      </SheetContent>
-    </Sheet>
+    </MasterForm>
   )
 }

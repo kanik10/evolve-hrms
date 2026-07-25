@@ -1,7 +1,5 @@
-import * as React from "react"
 import { useLocation, useParams } from "wouter"
 import {
-  ArrowLeft,
   Banknote,
   BarChart2,
   Briefcase,
@@ -9,21 +7,15 @@ import {
   CalendarDays,
   Clock3,
   DollarSign,
-  FileText,
-  History,
-  Link2,
   MapPin,
   Palmtree,
   UserCheck,
   Users,
-  type LucideIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { AppLayout } from "@/components/layout/AppLayout"
-import { RelationshipCard, type RelationshipItem } from "../components/RelationshipCard"
-import { StatusBadge } from "../components/StatusBadge"
+import { StandardDetailView, type DetailActivityEntry, type DetailHistoryEntry, type StandardDetailModel } from "../components/DetailLayout"
+import { OrgLayout } from "../components/OrgLayout"
+import { type RelationshipItem } from "../components/RelationshipCard"
 import {
   organizationBusinessUnits,
   organizationCostCenters,
@@ -43,52 +35,11 @@ import { getSalaryStructures, calculateNetSalary } from "../salary-structures/da
 import { getHolidays } from "../holiday-calendar/data/holidays"
 import { getShifts } from "../shifts/data/shifts"
 
-type Field = { label: string; value: React.ReactNode }
-type ActivityEntry = { title: string; detail: string; at: string; by: string }
-type HistoryEntry = { field: string; from: string; to: string; at: string; by: string }
-
-interface DetailModel {
-  title: string
-  subtitle?: string
-  status?: string
-  icon: LucideIcon
-  backPath: string
-  backLabel: string
+interface DetailModel extends StandardDetailModel {
   overviewTitle: string
-  general: Field[]
-  statistics: Field[]
-  relationships: Field[]
-  metadata: Field[]
-  related: Array<{ title: string; icon: LucideIcon; items: RelationshipItem[] }>
-  activity: ActivityEntry[]
-  history: HistoryEntry[]
 }
 
-function FieldGrid({ fields }: { fields: Field[] }) {
-  return (
-    <dl className="grid gap-4 sm:grid-cols-2">
-      {fields.map((field) => (
-        <div key={field.label}>
-          <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{field.label}</dt>
-          <dd className="mt-1 text-sm">{field.value}</dd>
-        </div>
-      ))}
-    </dl>
-  )
-}
-
-function DetailCard({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>{children}</CardContent>
-    </Card>
-  )
-}
-
-function makeActivity(name: string, type: string): ActivityEntry[] {
+function makeActivity(name: string, type: string): DetailActivityEntry[] {
   return [
     { title: `${type} viewed`, detail: `${name} detail profile was opened for review.`, at: "Today", by: "HR Admin" },
     { title: `${type} relationships refreshed`, detail: "Related mock records were recalculated from organization data.", at: "Yesterday", by: "System" },
@@ -96,7 +47,7 @@ function makeActivity(name: string, type: string): ActivityEntry[] {
   ]
 }
 
-function makeHistory(name: string, status?: string): HistoryEntry[] {
+function makeHistory(name: string, status?: string): DetailHistoryEntry[] {
   return [
     { field: "Record", from: "New", to: name, at: "Created", by: "System" },
     { field: "Status", from: "Draft", to: status ?? "Active", at: "Latest", by: "HR Admin" },
@@ -111,115 +62,20 @@ function StandardDetailPage({ buildModel }: { buildModel: (id: string) => Detail
 
   if (!model) {
     return (
-      <AppLayout breadcrumb={<div className="text-sm text-muted-foreground">Organization detail</div>}>
+      <OrgLayout section="Details">
         <div className="rounded-xl border bg-card p-10 text-center">
           <h2 className="text-lg font-semibold">Record not found</h2>
           <p className="mt-2 text-sm text-muted-foreground">The requested organization record could not be found.</p>
           <Button className="mt-6" onClick={() => navigate("/organization")}>Back to organization</Button>
         </div>
-      </AppLayout>
+      </OrgLayout>
     )
   }
 
-  const Icon = model.icon
-
   return (
-    <AppLayout breadcrumb={<div className="text-sm text-muted-foreground">Organization details</div>}>
-      <div className="space-y-6">
-        <div className="flex flex-col gap-4 border-b pb-6 md:flex-row md:items-start md:justify-between">
-          <div className="space-y-3">
-            <Button variant="ghost" className="h-8 px-0" onClick={() => navigate(model.backPath)}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {model.backLabel}
-            </Button>
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                <Icon className="h-6 w-6" />
-              </div>
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="text-2xl font-semibold">{model.title}</h1>
-                  {model.status && <StatusBadge status={model.status} />}
-                </div>
-                {model.subtitle && <p className="text-sm text-muted-foreground">{model.subtitle}</p>}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <Tabs defaultValue="overview">
-          <TabsList className="h-auto w-full justify-start rounded-none border-b bg-transparent p-0">
-            {[
-              ["overview", "Overview"],
-              ["related", "Related Records"],
-              ["activity", "Activity"],
-              ["history", "History"],
-            ].map(([value, label]) => (
-              <TabsTrigger
-                key={value}
-                value={value}
-                className="rounded-none border-b-2 border-transparent bg-transparent px-4 pb-3 pt-2 text-sm font-medium text-muted-foreground shadow-none data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none"
-              >
-                {label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          <TabsContent value="overview" className="mt-6">
-            <div className="grid gap-6 xl:grid-cols-2">
-              <DetailCard title="General Information"><FieldGrid fields={model.general} /></DetailCard>
-              <DetailCard title="Statistics"><FieldGrid fields={model.statistics} /></DetailCard>
-              <DetailCard title="Relationships"><FieldGrid fields={model.relationships} /></DetailCard>
-              <DetailCard title="Metadata"><FieldGrid fields={model.metadata} /></DetailCard>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="related" className="mt-6">
-            <div className="grid gap-6 lg:grid-cols-2">
-              {model.related.map((card) => <RelationshipCard key={card.title} {...card} />)}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="activity" className="mt-6">
-            <Card>
-              <CardContent className="py-6">
-                <div className="space-y-5">
-                  {model.activity.map((item) => (
-                    <div key={`${item.title}-${item.at}`} className="flex gap-3">
-                      <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                        <Link2 className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">{item.title}</p>
-                        <p className="mt-1 text-sm text-muted-foreground">{item.detail}</p>
-                        <p className="mt-1 text-xs text-muted-foreground">{item.by} - {item.at}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="history" className="mt-6">
-            <Card>
-              <CardContent className="p-0">
-                <div className="divide-y">
-                  {model.history.map((item) => (
-                    <div key={`${item.field}-${item.at}`} className="grid gap-2 p-4 text-sm md:grid-cols-[1fr_1fr_1fr_0.8fr]">
-                      <span className="font-medium">{item.field}</span>
-                      <span className="text-muted-foreground">From: {item.from}</span>
-                      <span>To: {item.to}</span>
-                      <span className="text-muted-foreground">{item.by} - {item.at}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </AppLayout>
+    <OrgLayout section="Details">
+      <StandardDetailView model={model} onBack={navigate} />
+    </OrgLayout>
   )
 }
 

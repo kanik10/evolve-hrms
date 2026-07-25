@@ -10,12 +10,24 @@ interface MasterFormProps {
   title: string
   description: string
   cancelLabel?: string
+  cancelIcon?: React.ReactNode
   submitLabel: string
   onSubmit: () => void
   children: React.ReactNode
 }
 
-export function MasterForm({ open, onOpenChange, icon: Icon, title, description, cancelLabel = "Cancel", submitLabel, onSubmit, children }: MasterFormProps) {
+export function MasterForm({
+  open,
+  onOpenChange,
+  icon: Icon,
+  title,
+  description,
+  cancelLabel = "Cancel",
+  cancelIcon,
+  submitLabel,
+  onSubmit,
+  children,
+}: MasterFormProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-xl">
@@ -34,7 +46,10 @@ export function MasterForm({ open, onOpenChange, icon: Icon, title, description,
         <div className="space-y-5">{children}</div>
 
         <div className="mt-8 flex justify-end gap-3 border-t pt-6">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>{cancelLabel}</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            {cancelIcon}
+            {cancelLabel}
+          </Button>
           <Button onClick={onSubmit}>{submitLabel}</Button>
         </div>
       </SheetContent>

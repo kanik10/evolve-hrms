@@ -222,22 +222,6 @@ export default function DepartmentsPage() {
     [handleEdit, handleDeletePrompt, handleArchive]
   )
 
-  // ── Table ──────────────────────────────────────────────────────────────────
-  const table = useReactTable({
-    data: filteredData,
-    columns,
-    state: { sorting, rowSelection, pagination },
-    enableRowSelection: true,
-    onSortingChange: setSorting,
-    onRowSelectionChange: setRowSelection,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  })
-
-  const selectedCount = Object.keys(rowSelection).length
-
   return (
     <OrgLayout section="Departments">
       <OrgPageHeader

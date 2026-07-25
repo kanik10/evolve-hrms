@@ -37,6 +37,8 @@ interface StandardMasterTableProps<TData> {
   getRowId: (row: TData) => string
   onRowClick?: (row: TData) => void
   loading?: boolean
+  showSelection?: boolean
+  wrapSortableHeaders?: boolean
 }
 
 export function StandardMasterTable<TData>({
@@ -47,6 +49,8 @@ export function StandardMasterTable<TData>({
   getRowId,
   onRowClick,
   loading = false,
+  showSelection = true,
+  wrapSortableHeaders = true,
 }: StandardMasterTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
@@ -61,33 +65,36 @@ export function StandardMasterTable<TData>({
   }, [data])
 
   const tableColumns = React.useMemo<ColumnDef<TData>[]>(
-    () => [
-      {
-        id: "select",
-        size: 44,
-        enableSorting: false,
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(Boolean(value))}
-            aria-label="Select all rows"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(Boolean(value))}
-            aria-label="Select row"
-            onClick={(event) => event.stopPropagation()}
-          />
-        ),
-      },
-      ...columns,
-    ],
-    [columns]
+    () =>
+      showSelection
+        ? [
+            {
+              id: "select",
+              size: 44,
+              enableSorting: false,
+              header: ({ table }) => (
+                <Checkbox
+                  checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                  }
+                  onCheckedChange={(value) => table.toggleAllPageRowsSelected(Boolean(value))}
+                  aria-label="Select all rows"
+                />
+              ),
+              cell: ({ row }) => (
+                <Checkbox
+                  checked={row.getIsSelected()}
+                  onCheckedChange={(value) => row.toggleSelected(Boolean(value))}
+                  aria-label="Select row"
+                  onClick={(event) => event.stopPropagation()}
+                />
+              ),
+            },
+            ...columns,
+          ]
+        : columns,
+    [columns, showSelection]
   )
 
   const table = useReactTable({
@@ -108,6 +115,9 @@ export function StandardMasterTable<TData>({
   const pageCount = Math.max(table.getPageCount(), 1)
   const firstResult = pagination.pageIndex * pagination.pageSize + 1
   const lastResult = Math.min((pagination.pageIndex + 1) * pagination.pageSize, data.length)
+  const handleRowNavigate = (row: TData) => {
+    onRowClick?.(row)
+  }
 
   return (
     <div className="space-y-4">
@@ -137,11 +147,12 @@ export function StandardMasterTable<TData>({
                     key={header.id}
                     style={{ width: header.column.getSize() !== 150 ? header.column.getSize() : undefined }}
                   >
-                    {header.isPlaceholder ? null : header.column.getCanSort() ? (
+                    {header.isPlaceholder ? null : header.column.getCanSort() && wrapSortableHeaders ? (
                       <button
                         type="button"
                         className="flex items-center gap-1.5 text-left font-medium"
                         onClick={header.column.getToggleSortingHandler()}
+                        aria-label={`Sort by ${String(header.column.columnDef.header)}`}
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
@@ -171,9 +182,18 @@ export function StandardMasterTable<TData>({
                   key={row.id}
                   data-state={row.getIsSelected() ? "selected" : undefined}
                   className={onRowClick ? "cursor-pointer" : undefined}
+                  tabIndex={onRowClick ? 0 : undefined}
+                  role={onRowClick ? "button" : undefined}
+                  onKeyDown={(event) => {
+                    if (!onRowClick || (event.target as Element).closest('button, input, a, [role="menuitem"], [role="checkbox"]')) return
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault()
+                      handleRowNavigate(row.original)
+                    }
+                  }}
                   onClick={(event) => {
                     if ((event.target as Element).closest('button, input, a, [role="menuitem"], [role="checkbox"]')) return
-                    onRowClick?.(row.original)
+                    handleRowNavigate(row.original)
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -210,9 +230,10 @@ export function StandardMasterTable<TData>({
                 setPagination((current) => ({ ...current, pageIndex: 0, pageSize: Number(value) }))
               }}
             >
-              <SelectTrigger className="h-8 w-16">
-                <SelectValue />
-              </SelectTrigger>
+            <SelectTrigger className="h-8 w-16">
+              <span className="sr-only">Rows per page</span>
+              <SelectValue />
+            </SelectTrigger>
               <SelectContent>
                 {[10, 20, 50].map((size) => (
                   <SelectItem key={size} value={String(size)}>
