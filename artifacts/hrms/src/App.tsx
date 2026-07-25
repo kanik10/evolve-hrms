@@ -7,6 +7,8 @@ import { Route, Switch, Router as WouterRouter, Redirect } from 'wouter';
 import Dashboard from './pages/Dashboard';
 import {
   CompanyProfile,
+  OrganizationOverviewPage,
+  OrganizationTreePage,
   Departments,
   Designations,
   Locations,
@@ -20,16 +22,19 @@ import {
   SalaryStructures,
 } from './features/organization';
 
-import DesignationDetailPage from './features/organization/designations/pages/DesignationDetailPage';
 import DepartmentDetailPage from './features/organization/departments/pages/DepartmentDetailPage';
-import LocationDetailPage from './features/organization/locations/pages/LocationDetailPage';
-import BusinessUnitDetailPage from './features/organization/business-units/pages/BusinessUnitDetailPage';
-import CostCenterDetailPage from './features/organization/cost-centers/pages/CostCenterDetailPage';
-import GradeDetailPage from './features/organization/grades/pages/GradeDetailPage';
-import EmploymentTypeDetailPage from './features/organization/employment-types/pages/EmploymentTypeDetailPage';
-import ShiftDetailPage from './features/organization/shifts/pages/ShiftDetailPage';
-import LeavePolicyDetailPage from './features/organization/leave-policies/pages/LeavePolicyDetailPage';
-import SalaryStructureDetailPage from './features/organization/salary-structures/pages/SalaryStructureDetailPage';
+import {
+  BusinessUnitDetailPage,
+  CostCenterDetailPage,
+  DesignationDetailPage,
+  EmploymentTypeDetailPage,
+  GradeDetailPage,
+  HolidayDetailPage,
+  LeavePolicyDetailPage,
+  LocationDetailPage,
+  SalaryStructureDetailPage,
+  ShiftDetailPage,
+} from './features/organization/pages/StandardDetailPages';
 import Employees from './pages/Employees';
 import Import from './pages/Import';
 import SkeletonPage from './pages/SkeletonPage';
@@ -45,6 +50,8 @@ function Router() {
       
       <Route path="/dashboard" component={Dashboard} />
       
+      <Route path="/organization/tree" component={OrganizationTreePage} />
+      <Route path="/organization" component={OrganizationOverviewPage} />
       <Route path="/organization/company" component={CompanyProfile} />
       <Route path="/organization/departments/:id" component={DepartmentDetailPage} />
       <Route path="/organization/departments" component={Departments} />
@@ -60,6 +67,7 @@ function Router() {
       <Route path="/organization/grades" component={Grades} />
       <Route path="/organization/employment-types/:id" component={EmploymentTypeDetailPage} />
       <Route path="/organization/employment-types" component={EmploymentTypes} />
+      <Route path="/organization/holiday-calendar/:id" component={HolidayDetailPage} />
       <Route path="/organization/holiday-calendar" component={HolidayCalendar} />
       <Route path="/organization/shifts/:id" component={ShiftDetailPage} />
       <Route path="/organization/shifts" component={ShiftManagement} />

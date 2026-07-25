@@ -1,12 +1,14 @@
 import * as React from "react"
 import { useLocation, useParams } from "wouter"
-import { ArrowLeft, DollarSign, Pencil } from "lucide-react"
+import { ArrowLeft, Building2, DollarSign, Network, Pencil } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AppLayout } from "@/components/layout/AppLayout"
+import { RelationshipCard } from "../../components/RelationshipCard"
 import { CostCenterDrawer } from "../components/CostCenterDrawer"
 import { getCostCenterById, updateCostCenters, type CostCenterFormValues } from "../data/costCenters"
+import { organizationBusinessUnits, organizationDepartments } from "../../data/organizationData"
 
 export default function CostCenterDetailPage() {
   const params = useParams<{ id: string }>()
@@ -36,6 +38,9 @@ export default function CostCenterDetailPage() {
     setDrawerOpen(false)
   }
 
+  const relatedDepartments = organizationDepartments.filter((department) => department.costCenter === costCenter.name)
+  const relatedBusinessUnits = organizationBusinessUnits.filter((unit) => unit.costCenters.includes(costCenter.name))
+
   return (
     <AppLayout breadcrumb={<div className="text-sm text-muted-foreground">Cost center details</div>}>
       <div className="space-y-6">
@@ -64,29 +69,56 @@ export default function CostCenterDetailPage() {
           </Button>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Cost center overview</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2">
-            <div>
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">Department</p>
-              <p className="mt-1 text-sm">{costCenter.department}</p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">Business Unit</p>
-              <p className="mt-1 text-sm">{costCenter.businessUnit}</p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">Budget</p>
-              <p className="mt-1 text-sm">{costCenter.budget}</p>
-            </div>
-            <div>
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">Status</p>
-              <p className="mt-1 text-sm">{costCenter.status}</p>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+          <Card>
+            <CardHeader>
+              <CardTitle>Cost center overview</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-2">
+              <div>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">Department</p>
+                <p className="mt-1 text-sm">{costCenter.department}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">Business Unit</p>
+                <p className="mt-1 text-sm">{costCenter.businessUnit}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">Budget</p>
+                <p className="mt-1 text-sm">{costCenter.budget}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">Status</p>
+                <p className="mt-1 text-sm">{costCenter.status}</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="space-y-6">
+            <RelationshipCard
+              title="Departments"
+              icon={Network}
+              items={relatedDepartments.map((department) => ({
+                id: department.id,
+                title: department.name,
+                subtitle: `Head: ${department.head}`,
+                meta: `${department.employeeCount.toLocaleString()} employees`,
+                status: department.status,
+              }))}
+            />
+            <RelationshipCard
+              title="Business Unit"
+              icon={Building2}
+              items={relatedBusinessUnits.map((unit) => ({
+                id: unit.id,
+                title: unit.name,
+                subtitle: `Head: ${unit.head}`,
+                meta: `${unit.departments.length} departments, ${unit.locations.length} locations`,
+                status: unit.status,
+              }))}
+            />
+          </div>
+        </div>
       </div>
 
       <CostCenterDrawer

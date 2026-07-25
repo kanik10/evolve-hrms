@@ -12,7 +12,7 @@ function OrgBreadcrumb({ section }: { section: string }) {
   return (
     <nav aria-label="breadcrumb" className="flex items-center gap-1.5 text-sm">
       <Link
-        href="/organization/company"
+        href="/organization"
         className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors"
       >
         <Building2 className="h-3.5 w-3.5 shrink-0" />

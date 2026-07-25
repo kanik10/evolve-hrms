@@ -35,12 +35,16 @@ interface SidebarItemProps {
 
 const SidebarItem = ({ icon, label, href, isActive, children, isExpanded = true }: SidebarItemProps) => {
   const [isOpen, setIsOpen] = React.useState(isActive || false)
+  const [, navigate] = useLocation()
 
   if (children) {
     return (
       <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full">
         <CollapsibleTrigger asChild>
           <button
+            onClick={() => {
+              if (href) navigate(href)
+            }}
             className={cn(
               "flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
               isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-sidebar-foreground/80"
@@ -130,9 +134,12 @@ export function Sidebar({ isExpanded = true, onNavigate }: { isExpanded?: boolea
           <SidebarItem 
             icon={<Building2 className="h-5 w-5" />} 
             label="Organization" 
+            href="/organization"
             isActive={location.startsWith("/organization")}
             isExpanded={isExpanded}
           >
+            <SubItem label="Overview" href="/organization" isActive={location === "/organization"} />
+            <SubItem label="Organization Tree" href="/organization/tree" isActive={location === "/organization/tree"} />
             <SubItem label="Company Profile" href="/organization/company" isActive={location === "/organization/company"} />
             <SubItem label="Departments" href="/organization/departments" isActive={location === "/organization/departments"} />
             <SubItem label="Designations" href="/organization/designations" isActive={location === "/organization/designations"} />

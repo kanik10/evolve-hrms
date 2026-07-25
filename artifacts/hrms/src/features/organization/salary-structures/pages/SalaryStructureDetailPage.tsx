@@ -1,10 +1,12 @@
 import * as React from "react"
-import { ArrowLeft, Banknote, Pencil } from "lucide-react"
+import { ArrowLeft, Banknote, GraduationCap, Pencil, Users } from "lucide-react"
 import { useLocation, useParams } from "wouter"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AppLayout } from "@/components/layout/AppLayout"
+import { RelationshipCard } from "../../components/RelationshipCard"
+import { organizationEmployees, organizationGrades } from "../../data/organizationData"
 import { SalaryStructureDrawer } from "../components/SalaryStructureDrawer"
 import { calculateNetSalary, getSalaryStructures, type SalaryStructureFormValues, type SalaryStructureRecord } from "../data/salaryStructures"
 
@@ -54,6 +56,8 @@ export default function SalaryStructureDetailPage() {
     tds: salaryStructure.tds,
     status: salaryStructure.status,
   })
+  const assignedEmployees = organizationEmployees.filter((employee) => employee.salaryStructureId === salaryStructure.id)
+  const relatedGrades = organizationGrades.filter((grade) => grade.name === salaryStructure.grade)
 
   return (
     <AppLayout breadcrumb={<div className="text-sm text-muted-foreground">Salary structure details</div>}>
@@ -114,6 +118,32 @@ export default function SalaryStructureDetailPage() {
             </div>
           </CardContent>
         </Card>
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          <RelationshipCard
+            title="Grades"
+            icon={GraduationCap}
+            items={relatedGrades.map((grade) => ({
+              id: grade.id,
+              title: grade.name,
+              subtitle: grade.level,
+              meta: grade.salaryRange,
+              status: grade.status,
+            }))}
+          />
+          <RelationshipCard
+            title="Assigned Employees"
+            icon={Users}
+            items={assignedEmployees.map((employee) => ({
+              id: employee.id,
+              title: employee.name,
+              subtitle: employee.designation,
+              meta: employee.department,
+              status: employee.status,
+              tags: employee.location ? [employee.location] : undefined,
+            }))}
+          />
+        </div>
       </div>
 
       <SalaryStructureDrawer

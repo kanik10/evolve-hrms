@@ -12,6 +12,10 @@ import {
   Save,
   RotateCcw,
   Upload,
+  CalendarClock,
+  Globe2,
+  Landmark,
+  Mail,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -85,13 +89,39 @@ const schema = z
       )
       .optional()
       .or(z.literal("")),
+    cinNumber: z.string().optional().or(z.literal("")),
+    tanNumber: z
+      .string()
+      .refine(
+        (val) => !val || /^[A-Z]{4}[0-9]{5}[A-Z]{1}$/.test(val),
+        "Invalid TAN format (e.g. ABCD12345E)"
+      )
+      .optional()
+      .or(z.literal("")),
+    pfRegistrationNumber: z.string().optional().or(z.literal("")),
+    esiRegistrationNumber: z.string().optional().or(z.literal("")),
+    professionalTaxNumber: z.string().optional().or(z.literal("")),
 
     currency: z.string().min(1, "Please select a currency"),
     timezone: z.string().min(1, "Please select a timezone"),
     financialYear: z.string().min(1, "Please select a financial year"),
+    language: z.string().min(1, "Please select a language"),
+    dateFormat: z.string().min(1, "Please select a date format"),
+    timeFormat: z.string().min(1, "Please select a time format"),
+    numberFormat: z.string().min(1, "Please select a number format"),
     workingDays: z.array(z.string()).min(1, "Select at least one working day"),
     businessHoursStart: z.string().min(1, "Start time is required"),
     businessHoursEnd: z.string().min(1, "End time is required"),
+    brandDisplayName: z.string().optional().or(z.literal("")),
+    brandTagline: z.string().optional().or(z.literal("")),
+    brandPrimaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Use a valid hex color"),
+    brandAccentColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Use a valid hex color"),
+    hrContactName: z.string().min(1, "HR contact name is required"),
+    hrContactEmail: z.string().email("Enter a valid HR email address"),
+    hrContactPhone: z.string().min(10, "Enter a valid HR contact number"),
+    financeContactName: z.string().min(1, "Finance contact name is required"),
+    financeContactEmail: z.string().email("Enter a valid finance email address"),
+    supportEmail: z.string().email("Enter a valid support email address"),
   })
   .refine(
     (data) => {

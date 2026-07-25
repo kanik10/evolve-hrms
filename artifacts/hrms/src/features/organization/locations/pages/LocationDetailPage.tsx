@@ -4,9 +4,10 @@ import { Building2, Clock3, MapPin, BriefcaseBusiness, Users } from "lucide-reac
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { OrgLayout, DetailLayout, StatusBadge, EmptyState } from "../../index"
+import { OrgLayout, DetailLayout, StatusBadge, EmptyState, RelationshipCard } from "../../index"
 import { LocationDrawer } from "../components/LocationDrawer"
-import { type LocationFormValues, getLocationById, updateLocations, locationEmployees, locationDepartments } from "../data/locations"
+import { type LocationFormValues, getLocationById, updateLocations } from "../data/locations"
+import { organizationBusinessUnits, organizationDepartments, organizationEmployees } from "../../data/organizationData"
 
 export default function LocationDetailPage() {
   const params = useParams<{ id: string }>()
@@ -39,6 +40,10 @@ export default function LocationDetailPage() {
     setDrawerOpen(false)
   }
 
+  const relatedDepartments = organizationDepartments.filter((department) => department.locations.includes(location.name))
+  const relatedEmployees = organizationEmployees.filter((employee) => employee.location === location.name)
+  const relatedBusinessUnits = organizationBusinessUnits.filter((unit) => unit.locations.includes(location.name))
+
   return (
     <OrgLayout section="Locations">
       <DetailLayout
@@ -51,40 +56,40 @@ export default function LocationDetailPage() {
         onEdit={() => setDrawerOpen(true)}
         aside={
           <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  Employees at this location
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {(locationEmployees[location.id] ?? []).map((employee) => (
-                  <div key={employee.email} className="rounded-lg border p-3">
-                    <p className="text-sm font-medium">{employee.name}</p>
-                    <p className="text-sm text-muted-foreground">{employee.role}</p>
-                    <p className="text-xs text-muted-foreground">{employee.email}</p>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BriefcaseBusiness className="h-4 w-4" />
-                  Departments at this location
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {(locationDepartments[location.id] ?? []).map((department) => (
-                  <div key={department.name} className="rounded-lg border p-3">
-                    <p className="text-sm font-medium">{department.name}</p>
-                    <p className="text-sm text-muted-foreground">Head: {department.head}</p>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+            <RelationshipCard
+              title="Departments"
+              icon={BriefcaseBusiness}
+              items={relatedDepartments.map((department) => ({
+                id: department.id,
+                title: department.name,
+                subtitle: `Head: ${department.head}`,
+                meta: `${department.employeeCount.toLocaleString()} employees`,
+                status: department.status,
+                tags: [department.businessUnit, department.costCenter],
+              }))}
+            />
+            <RelationshipCard
+              title="Employees"
+              icon={Users}
+              items={relatedEmployees.map((employee) => ({
+                id: employee.id,
+                title: employee.name,
+                subtitle: employee.designation,
+                meta: employee.department,
+                status: employee.status,
+              }))}
+            />
+            <RelationshipCard
+              title="Business Units"
+              icon={Building2}
+              items={relatedBusinessUnits.map((unit) => ({
+                id: unit.id,
+                title: unit.name,
+                subtitle: `Head: ${unit.head}`,
+                meta: `${unit.departments.length} departments`,
+                status: unit.status,
+              }))}
+            />
           </div>
         }
       >

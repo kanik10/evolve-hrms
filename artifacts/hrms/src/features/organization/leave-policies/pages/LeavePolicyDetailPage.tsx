@@ -1,10 +1,12 @@
 import * as React from "react"
-import { ArrowLeft, FileText, Pencil } from "lucide-react"
+import { ArrowLeft, FileText, Pencil, Users } from "lucide-react"
 import { useLocation, useParams } from "wouter"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AppLayout } from "@/components/layout/AppLayout"
+import { RelationshipCard } from "../../components/RelationshipCard"
+import { organizationEmployees } from "../../data/organizationData"
 import { LeavePolicyDrawer } from "../components/LeavePolicyDrawer"
 import { type LeavePolicyFormValues, getLeavePolicies, type LeavePolicyRecord } from "../data/leavePolicies"
 
@@ -40,6 +42,8 @@ export default function LeavePolicyDetailPage() {
     setLeavePolicy(updatedPolicy)
     setDrawerOpen(false)
   }
+
+  const assignedEmployees = organizationEmployees.filter((employee) => employee.leavePolicyId === leavePolicy.id)
 
   return (
     <AppLayout breadcrumb={<div className="text-sm text-muted-foreground">Leave policy details</div>}>
@@ -100,6 +104,19 @@ export default function LeavePolicyDetailPage() {
             </div>
           </CardContent>
         </Card>
+
+        <RelationshipCard
+          title="Assigned Employees"
+          icon={Users}
+          items={assignedEmployees.map((employee) => ({
+            id: employee.id,
+            title: employee.name,
+            subtitle: employee.designation,
+            meta: employee.department,
+            status: employee.status,
+            tags: employee.location ? [employee.location] : undefined,
+          }))}
+        />
       </div>
 
       <LeavePolicyDrawer

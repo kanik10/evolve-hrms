@@ -1,11 +1,11 @@
 import * as React from "react"
 import { useLocation, useParams } from "wouter"
-import { Building2, Pencil, Briefcase, MapPin, Receipt } from "lucide-react"
+import { Building2, Briefcase, MapPin, Receipt } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { OrgLayout, DetailLayout, StatusBadge, EmptyState } from "../../index"
-import { Button } from "@/components/ui/button"
+import { OrgLayout, DetailLayout, StatusBadge, EmptyState, RelationshipCard } from "../../index"
 import { BusinessUnitDrawer } from "../components/BusinessUnitDrawer"
 import { getBusinessUnitById, updateBusinessUnits, type BusinessUnitFormValues } from "../data/businessUnits"
+import { organizationCostCenters, organizationDepartments, organizationLocations } from "../../data/organizationData"
 
 export default function BusinessUnitDetailPage() {
   const params = useParams<{ id: string }>()
@@ -36,6 +36,10 @@ export default function BusinessUnitDetailPage() {
     setDrawerOpen(false)
   }
 
+  const relatedDepartments = organizationDepartments.filter((department) => department.businessUnit === businessUnit.name)
+  const relatedLocations = organizationLocations.filter((location) => location.businessUnit === businessUnit.name)
+  const relatedCostCenters = organizationCostCenters.filter((center) => center.businessUnit === businessUnit.name)
+
   return (
     <OrgLayout section="Business Units">
       <DetailLayout
@@ -48,36 +52,41 @@ export default function BusinessUnitDetailPage() {
         onEdit={() => setDrawerOpen(true)}
         aside={
           <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2"><Briefcase className="h-4 w-4" />Departments</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {businessUnit.departments.map((department) => (
-                  <div key={department} className="rounded-lg border px-3 py-2 text-sm">{department}</div>
-                ))}
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2"><MapPin className="h-4 w-4" />Locations</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {businessUnit.locations.map((location) => (
-                  <div key={location} className="rounded-lg border px-3 py-2 text-sm">{location}</div>
-                ))}
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2"><Receipt className="h-4 w-4" />Cost centers</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {businessUnit.costCenters.map((center) => (
-                  <div key={center} className="rounded-lg border px-3 py-2 text-sm">{center}</div>
-                ))}
-              </CardContent>
-            </Card>
+            <RelationshipCard
+              title="Departments"
+              icon={Briefcase}
+              items={relatedDepartments.map((department) => ({
+                id: department.id,
+                title: department.name,
+                subtitle: `Head: ${department.head}`,
+                meta: `${department.employeeCount.toLocaleString()} employees`,
+                status: department.status,
+                tags: [department.costCenter],
+              }))}
+            />
+            <RelationshipCard
+              title="Locations"
+              icon={MapPin}
+              items={relatedLocations.map((location) => ({
+                id: location.id,
+                title: location.name,
+                subtitle: `${location.city}, ${location.country}`,
+                meta: location.workingHours,
+                status: location.status,
+              }))}
+            />
+            <RelationshipCard
+              title="Cost Centers"
+              icon={Receipt}
+              items={relatedCostCenters.map((center) => ({
+                id: center.id,
+                title: center.name,
+                subtitle: center.code,
+                meta: `Budget: ${center.budget}`,
+                status: center.status,
+                tags: [center.department],
+              }))}
+            />
           </div>
         }
       >
