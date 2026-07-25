@@ -35,7 +35,7 @@ export function OrgDeleteDialog({
             <AlertTriangle className="h-5 w-5" />
           </div>
           <AlertDialogTitle>
-            Delete "{entityName}"?
+            Delete &quot;{entityName}&quot;?
           </AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-3 text-sm text-muted-foreground">

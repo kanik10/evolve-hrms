@@ -120,7 +120,10 @@ export function StandardMasterTable<TData>({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" aria-busy={loading}>
+      <div className="sr-only" aria-live="polite">
+        {loading ? "Loading records" : `${data.length} records available`}
+      </div>
       {selectedCount > 0 && (
         <div className="flex items-center gap-3 rounded-md border bg-muted/50 px-4 py-2 text-sm">
           <span className="font-medium">

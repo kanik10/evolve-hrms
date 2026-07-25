@@ -1,36 +1,13 @@
 import * as React from "react"
-import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  getPaginationRowModel,
-  flexRender,
-  type SortingState,
-  type PaginationState,
-  type RowSelectionState,
-} from "@tanstack/react-table"
-import { Plus, ChevronLeft, ChevronRight, Briefcase } from "lucide-react"
+import { Plus, Briefcase } from "lucide-react"
 import { useLocation } from "wouter"
 import { Button } from "@/components/ui/button"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
+import { EmptyState } from "../../components/EmptyState"
 import { OrgLayout } from "../../components/OrgLayout"
 import { OrgPageHeader } from "../../components/OrgPageHeader"
 import { OrgDeleteDialog } from "../../components/OrgDeleteDialog"
+import { StandardMasterTable } from "../../components/StandardMasterTable"
 import { getDesignationColumns } from "../components/DesignationColumns"
 import { DesignationStatCards } from "../components/DesignationStatCards"
 import { DesignationFilters } from "../components/DesignationFilters"
@@ -66,17 +43,15 @@ export default function DesignationsPage() {
     Designation | undefined
   >()
 
-  // ── Table state ────────────────────────────────────────────────────────────
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  })
+  // ── Loading state ────────────────────────────────────────────────────────
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    const timer = window.setTimeout(() => setLoading(false), 450)
+    return () => window.clearTimeout(timer)
+  }, [])
 
   // ── Handlers ───────────────────────────────────────────────────────────────
-  const resetPagination = () =>
-    setPagination((p) => ({ ...p, pageIndex: 0 }))
 
   const handleCreate = React.useCallback(() => {
     setEditingDesg(undefined)
@@ -204,22 +179,6 @@ export default function DesignationsPage() {
     [handleEdit, handleDeletePrompt, handleArchive]
   )
 
-  // ── Table ──────────────────────────────────────────────────────────────────
-  const table = useReactTable({
-    data: filteredData,
-    columns,
-    state: { sorting, rowSelection, pagination },
-    enableRowSelection: true,
-    onSortingChange: setSorting,
-    onRowSelectionChange: setRowSelection,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  })
-
-  const selectedCount = Object.keys(rowSelection).length
-
   return (
     <OrgLayout section="Designations">
       <OrgPageHeader
@@ -239,154 +198,29 @@ export default function DesignationsPage() {
       <div className="mt-6 space-y-4">
         <DesignationFilters
           search={search}
-          onSearchChange={(v) => { setSearch(v); resetPagination() }}
+          onSearchChange={setSearch}
           statusFilter={statusFilter}
-          onStatusChange={(v) => { setStatusFilter(v); resetPagination() }}
+          onStatusChange={setStatusFilter}
           deptFilter={deptFilter}
-          onDeptChange={(v) => { setDeptFilter(v); resetPagination() }}
+          onDeptChange={setDeptFilter}
         />
 
-        {selectedCount > 0 && (
-          <div className="flex items-center gap-3 rounded-md border bg-muted/50 px-4 py-2 text-sm">
-            <span className="font-medium">
-              {selectedCount} row{selectedCount > 1 ? "s" : ""} selected
-            </span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 text-muted-foreground hover:text-foreground"
-              onClick={() => setRowSelection({})}
-            >
-              Clear selection
-            </Button>
-          </div>
-        )}
-
-        <div className="overflow-hidden rounded-md border bg-card">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((hg) => (
-                <TableRow key={hg.id} className="hover:bg-transparent bg-muted/50">
-                  {hg.headers.map((header) => (
-                    <TableHead
-                      key={header.id}
-                      style={{
-                        width:
-                          header.column.getSize() !== 150
-                            ? header.column.getSize()
-                            : undefined,
-                      }}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.length > 0 ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() ? "selected" : undefined}
-                    className="cursor-pointer"
-                    onClick={(e) => {
-                      if (
-                        (e.target as Element).closest(
-                          'button, input, a, [role="menuitem"], [role="checkbox"]'
-                        )
-                      )
-                        return
-                      navigate(`/organization/designations/${row.original.id}`)
-                    }}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="py-14 text-center text-sm text-muted-foreground"
-                  >
-                    No designations match your current filters.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        {/* Pagination */}
-        <div className="flex flex-wrap items-center justify-between gap-4 px-1">
-          <p className="text-sm text-muted-foreground">
-            {filteredData.length === 0
-              ? "No results"
-              : `Showing ${pagination.pageIndex * pagination.pageSize + 1}–${Math.min(
-                  (pagination.pageIndex + 1) * pagination.pageSize,
-                  filteredData.length
-                )} of ${filteredData.length} designation${filteredData.length !== 1 ? "s" : ""}`}
-          </p>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="hidden sm:inline">Rows per page</span>
-              <Select
-                value={String(pagination.pageSize)}
-                onValueChange={(v) => {
-                  table.setPageSize(Number(v))
-                  resetPagination()
-                }}
-              >
-                <SelectTrigger className="h-8 w-16">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {[10, 20, 50].map((size) => (
-                    <SelectItem key={size} value={String(size)}>
-                      {size}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center gap-1">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <span className="min-w-[60px] text-center text-sm tabular-nums">
-                {pagination.pageIndex + 1} /{" "}
-                {Math.max(table.getPageCount(), 1)}
-              </span>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
+        <StandardMasterTable
+          data={filteredData}
+          columns={columns}
+          entityLabel="designation"
+          getRowId={(row) => row.id}
+          loading={loading}
+          onRowClick={(row) => navigate(`/organization/designations/${row.id}`)}
+          emptyState={
+            <EmptyState
+              icon={Briefcase}
+              title="No designations found"
+              description="Adjust your filters or create a new designation to get started."
+              action={{ label: "Add Designation", onClick: handleCreate, icon: Plus }}
+            />
+          }
+        />
       </div>
 
       <DesignationDrawer

@@ -133,8 +133,13 @@ export function OrganizationMasterPage<TRecord extends OrganizationStatusRecord,
   const [editingRecord, setEditingRecord] = React.useState<TRecord | undefined>()
   const [deleteOpen, setDeleteOpen] = React.useState(false)
   const [deletingRecord, setDeletingRecord] = React.useState<TRecord | undefined>()
-  const [loading] = React.useState(false)
+  const [loading, setLoading] = React.useState(true)
   const entityTitle = getEntityTitle(title)
+
+  React.useEffect(() => {
+    const timer = window.setTimeout(() => setLoading(false), 450)
+    return () => window.clearTimeout(timer)
+  }, [])
 
   const filteredRecords = React.useMemo(() => {
     const query = search.trim().toLowerCase()

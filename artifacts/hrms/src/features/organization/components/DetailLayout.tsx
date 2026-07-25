@@ -55,8 +55,8 @@ export function DetailLayout({
       </div>
 
       <div className={aside ? "grid gap-6 lg:grid-cols-[1.25fr_0.75fr]" : undefined}>
-        <div>{children}</div>
-        {aside && <div>{aside}</div>}
+        <div className="min-w-0">{children}</div>
+        {aside && <div className="min-w-0">{aside}</div>}
       </div>
     </div>
   )
@@ -176,8 +176,8 @@ export function StandardDetailView({ model, onBack }: StandardDetailViewProps) {
       backLabel={model.backLabel}
       onBack={() => onBack(model.backPath)}
     >
-      <Tabs defaultValue="overview">
-        <TabsList className="h-auto w-full justify-start rounded-none border-b bg-transparent p-0">
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="h-auto w-full justify-start rounded-none border-b bg-transparent p-0 overflow-x-auto">
           {[
             ["overview", "Overview"],
             ["related", "Related Records"],

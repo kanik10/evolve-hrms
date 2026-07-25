@@ -158,19 +158,25 @@ export default function OrganizationOverviewPage() {
         <div className="space-y-6">
           <ChartCard title="Upcoming Holidays">
             <div className="mt-2 space-y-4">
-              {holidays.map((holiday) => (
-                <div key={holiday.id} className="flex items-start justify-between gap-4 border-l-2 border-primary pl-3">
-                  <div>
-                    <p className="text-sm font-medium">{holiday.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {formatHolidayDate(holiday.date)} - {holiday.location}
-                    </p>
+              {holidays.length > 0 ? (
+                holidays.map((holiday) => (
+                  <div key={holiday.id} className="flex items-start justify-between gap-4 border-l-2 border-primary pl-3">
+                    <div>
+                      <p className="text-sm font-medium">{holiday.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatHolidayDate(holiday.date)} - {holiday.location}
+                      </p>
+                    </div>
+                    <Badge variant={holiday.optional ? "secondary" : "outline"} className="shrink-0 text-[10px]">
+                      {getDaysUntil(holiday.date)}
+                    </Badge>
                   </div>
-                  <Badge variant={holiday.optional ? "secondary" : "outline"} className="shrink-0 text-[10px]">
-                    {getDaysUntil(holiday.date)}
-                  </Badge>
+                ))
+              ) : (
+                <div className="rounded-lg border border-dashed bg-muted/20 p-4 text-sm text-muted-foreground">
+                  No upcoming holidays are configured for the current period.
                 </div>
-              ))}
+              )}
             </div>
           </ChartCard>
 

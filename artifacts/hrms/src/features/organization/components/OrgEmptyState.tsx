@@ -24,7 +24,7 @@ export function OrgEmptyState({
   hint,
 }: OrgEmptyStateProps) {
   return (
-    <div className="flex min-h-[400px] flex-col items-center justify-center rounded-xl border border-dashed bg-muted/20 p-12 text-center">
+    <div className="flex min-h-[400px] flex-col items-center justify-center rounded-xl border border-dashed bg-muted/20 p-12 text-center" role="status" aria-live="polite">
       <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-muted">
         <Icon className="h-6 w-6 text-muted-foreground" />
       </div>
